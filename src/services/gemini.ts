@@ -14,7 +14,7 @@ const initModel = () => {
     // Initialize only if not already created
     if (!genAI) {
         genAI = new GoogleGenerativeAI(API_KEY);
-        model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     }
     return model;
 };
@@ -47,9 +47,9 @@ Keep answers under 150 words unless the user requests detailed explanation.
         const result = await modelInstance.generateContent(prompt);
         const text = result.response.text();
         return text || "No response generated.";
-    } 
+    }
     catch (error: any) {
         console.error("Gemini API Error:", error);
-        return "Sorry, an error occurred while generating advice. Please try again later.";
+        return `Error: ${error.message || "Unknown error occurred"}`;
     }
 };
