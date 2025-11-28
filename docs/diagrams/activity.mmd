@@ -1,0 +1,28 @@
+activityDiagram-v2
+    start
+    :Open Dashboard;
+    if (New Day?) then (yes)
+        :Reset Daily Counters;
+        :Archive Previous Day Log;
+    else (no)
+        :Load Current Progress;
+    endif
+
+    fork
+        :Log Water Intake;
+    fork again
+        :Log Sleep Hours;
+    fork again
+        :Log Steps;
+    fork again
+        :Check off Habits;
+    end fork
+
+    :Calculate Daily Score;
+    if (Score >= Goal?) then (yes)
+        :Show Success Animation;
+        :Award Bonus Points;
+    endif
+    
+    :Save to LocalStorage;
+    stop

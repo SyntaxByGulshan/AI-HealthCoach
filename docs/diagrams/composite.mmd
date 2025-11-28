@@ -1,0 +1,24 @@
+classDiagram
+    class DietPlan {
+        +String id
+        +List~Meal~ meals
+    }
+    class Meal {
+        +String name
+        +String time
+        +List~FoodItem~ items
+    }
+    class FoodItem {
+        +String name
+        +Int calories
+        +Macros macros
+    }
+    class Macros {
+        +Int protein
+        +Int carbs
+        +Int fats
+    }
+
+    DietPlan *-- Meal : contains
+    Meal *-- FoodItem : consists of
+    FoodItem *-- Macros : has

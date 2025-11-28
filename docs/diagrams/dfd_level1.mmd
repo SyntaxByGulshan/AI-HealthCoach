@@ -1,0 +1,25 @@
+graph TD
+    User((User))
+    P1(1.0 Manage Profile)
+    P2(2.0 Generate Plan)
+    P3(3.0 Track Activity)
+    D1[(User DB)]
+    D2[(Plan DB)]
+    D3[(Activity DB)]
+    ML(ML Service)
+    AI(Gemini API)
+
+    User --> P1
+    P1 --> D1
+    
+    User --> P2
+    D1 --> P2
+    P2 --> ML
+    ML --> P2
+    P2 --> AI
+    AI --> P2
+    P2 --> D2
+    
+    User --> P3
+    P3 --> D3
+    D3 --> P3

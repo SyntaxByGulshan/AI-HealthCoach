@@ -1,0 +1,30 @@
+graph TD
+    subgraph Client
+        FE[Frontend App]
+        Redux[State Manager]
+    end
+
+    subgraph Backend
+        Auth[Auth Service]
+        Plan[Plan Service]
+        API[API Gateway]
+    end
+
+    subgraph Data
+        DB[(MongoDB)]
+        Redis[(Redis Cache)]
+    end
+
+    subgraph External
+        ML[ML Predictor]
+        Gemini[Google Gemini]
+    end
+
+    FE --> Redux
+    FE --> API
+    API --> Auth
+    API --> Plan
+    Plan --> DB
+    Plan --> Redis
+    Plan --> ML
+    Plan --> Gemini

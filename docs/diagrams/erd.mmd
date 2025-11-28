@@ -1,0 +1,30 @@
+erDiagram
+    USER ||--o{ DAILY_LOG : has
+    USER ||--o{ PLAN : generates
+    USER {
+        string id PK
+        string email
+        string password_hash
+        string name
+        int age
+        float weight
+        float height
+        string goal
+    }
+    DAILY_LOG {
+        string id PK
+        string user_id FK
+        date date
+        int water_ml
+        float sleep_hours
+        int steps
+        json habits_status
+    }
+    PLAN {
+        string id PK
+        string user_id FK
+        string type
+        date start_date
+        date end_date
+        json content
+    }

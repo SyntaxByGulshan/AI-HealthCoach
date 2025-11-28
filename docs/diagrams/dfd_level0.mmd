@@ -1,0 +1,12 @@
+graph LR
+    User((User))
+    System[AI Health Coach System]
+    Gemini((Google Gemini AI))
+
+    User -- Profile Data --> System
+    User -- Daily Logs --> System
+    System -- Health Plans --> User
+    System -- Progress Reports --> User
+    
+    System -- Prompts --> Gemini
+    Gemini -- Generated Content --> System

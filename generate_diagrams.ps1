@@ -1,0 +1,12 @@
+npx -y @mermaid-js/mermaid-cli -i docs/diagrams/class.mmd -o docs/diagrams/class.png
+npx -y @mermaid-js/mermaid-cli -i docs/diagrams/sequence.mmd -o docs/diagrams/sequence.png
+npx -y @mermaid-js/mermaid-cli -i docs/diagrams/activity.mmd -o docs/diagrams/activity.png
+npx -y @mermaid-js/mermaid-cli -i docs/diagrams/deployment.mmd -o docs/diagrams/deployment.png
+npx -y @mermaid-js/mermaid-cli -i docs/diagrams/object.mmd -o docs/diagrams/object.png
+npx -y @mermaid-js/mermaid-cli -i docs/diagrams/component.mmd -o docs/diagrams/component.png
+npx -y @mermaid-js/mermaid-cli -i docs/diagrams/package.mmd -o docs/diagrams/package.png
+npx -y @mermaid-js/mermaid-cli -i docs/diagrams/composite.mmd -o docs/diagrams/composite.png
+npx -y @mermaid-js/mermaid-cli -i docs/diagrams/communication.mmd -o docs/diagrams/communication.png
+npx -y @mermaid-js/mermaid-cli -i docs/diagrams/erd.mmd -o docs/diagrams/erd.png
+npx -y @mermaid-js/mermaid-cli -i docs/diagrams/dfd_level0.mmd -o docs/diagrams/dfd_level0.png
+npx -y @mermaid-js/mermaid-cli -i docs/diagrams/dfd_level1.mmd -o docs/diagrams/dfd_level1.png
