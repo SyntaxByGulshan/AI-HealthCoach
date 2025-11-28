@@ -1,0 +1,16 @@
+graph LR
+    User((User))
+    UI[Dashboard UI]
+    Ctrl[Controller]
+    Store[Redux Store]
+    API[Backend API]
+    DB[(Database)]
+
+    User -- 1. Clicks Check-in --> UI
+    UI -- 2. Dispatches Action --> Ctrl
+    Ctrl -- 3. Updates State --> Store
+    Ctrl -- 4. Syncs Data --> API
+    API -- 5. Persists Log --> DB
+    DB -.-> API : Confirm
+    API -.-> Ctrl : Success
+    Ctrl -.-> UI : Show Notification

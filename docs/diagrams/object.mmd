@@ -1,0 +1,19 @@
+classDiagram
+    class User_JohnDoe {
+        id = "u123"
+        name = "John Doe"
+        goal = "Weight Loss"
+    }
+    class DietPlan_Week1 {
+        id = "dp001"
+        calories = 2200
+        status = "Active"
+    }
+    class DailyLog_Nov28 {
+        date = "2025-11-28"
+        water = 1500ml
+        steps = 5000
+    }
+
+    User_JohnDoe -- DietPlan_Week1 : has
+    User_JohnDoe -- DailyLog_Nov28 : tracks

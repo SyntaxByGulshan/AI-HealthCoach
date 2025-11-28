@@ -1,0 +1,26 @@
+usecaseDiagram
+    actor "User" as U
+    actor "AI System (Gemini)" as AI
+    actor "System Admin" as Admin
+
+    subgraph "AI Health Coach System"
+        usecase "Create Profile" as UC1
+        usecase "View Dashboard" as UC2
+        usecase "Generate Diet Plan" as UC3
+        usecase "Generate Workout Plan" as UC4
+        usecase "Log Daily Activity" as UC5
+        usecase "Track Progress" as UC6
+        usecase "Manage System Config" as UC7
+    end
+
+    U --> UC1
+    U --> UC2
+    U --> UC3
+    U --> UC4
+    U --> UC5
+    U --> UC6
+
+    UC3 ..> AI : Include
+    UC4 ..> AI : Include
+
+    Admin --> UC7

@@ -1,73 +1,38 @@
-# React + TypeScript + Vite
+# AI Health Coach
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**AI Health Coach** is an intelligent, personalized web application designed to help users achieve their fitness and wellness goals. Powered by **Google Gemini AI**, it generates custom diet plans, workout routines, and tracks daily habits to ensure users stay on the path to a healthier lifestyle.
 
-Currently, two official plugins are available:
+![Project Banner](https://placehold.co/1200x400?text=AI+Health+Coach+Banner)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Key Features
 
-## React Compiler
+*   **AI-Powered Planning**: Instantly generate weekly Diet and Workout plans tailored to your body type and goals.
+*   **Smart Dashboard**: Track water intake, sleep, and daily steps in real-time.
+*   **Gamification**: Earn points for completing daily habits and sticking to your plan.
+*   **Responsive Design**: A seamless experience across Desktop, Tablet, and Mobile devices.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 📚 Documentation
 
-## Expanding the ESLint configuration
+For detailed information about the project, please refer to the following documents:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+*   **[System Architecture](docs/ARCHITECTURE.md)**: High-level overview, tech stack, and future roadmap.
+*   **[Workflows & Data Flow](docs/WORKFLOWS.md)**: User journeys and system data flow descriptions.
+*   **[UML Diagrams](docs/UML_DIAGRAMS.md)**: Visual representations of the system (Class, Sequence, Activity, etc.).
+*   **[Developer Guide](docs/DEVELOPMENT.md)**: Setup instructions, project structure, and coding standards.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🛠️ Tech Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+*   **Frontend**: React 19, TypeScript, Vite
+*   **Styling**: Tailwind CSS 4
+*   **State Management**: Redux Toolkit
+*   **AI Engine**: Google Gemini 1.5 Flash
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 📦 Getting Started
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+1.  Clone the repo.
+2.  Install dependencies: `npm install`
+3.  Set up your `.env` with `VITE_GEMINI_API_KEY`.
+4.  Run the app: `npm run dev`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+*Final Year Project - 2025*

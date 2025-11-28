@@ -1,0 +1,34 @@
+deploymentDiagram
+    node "Client Device" {
+        component "Web Browser" {
+            artifact "React SPA"
+        }
+    }
+
+    node "Cloud Infrastructure" {
+        node "CDN / Host" {
+            artifact "Static Assets (HTML/JS/CSS)"
+        }
+        
+        node "Backend Server" {
+            component "Node.js + Express"
+        }
+
+        node "ML Service" {
+            component "Python + FastAPI"
+        }
+
+        node "Database Cluster" {
+            database "MongoDB"
+        }
+        
+        node "Google Cloud Platform" {
+            component "Gemini API"
+        }
+    }
+
+    "Web Browser" -- "HTTPS" --> "CDN / Host" : Requests Assets
+    "Web Browser" -- "HTTPS/REST" --> "Backend Server" : API Calls
+    "Backend Server" -- "TCP" --> "MongoDB" : Read/Write Data
+    "Backend Server" -- "HTTP/gRPC" --> "ML Service" : Prediction Requests
+    "Backend Server" -- "HTTPS/REST" --> "Gemini API" : Generates Content

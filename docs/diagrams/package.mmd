@@ -1,0 +1,23 @@
+classDiagram
+    namespace Client_Layer {
+        class Components
+        class Pages
+        class ReduxSlices
+        class ApiServices
+    }
+
+    namespace Server_Layer {
+        class Controllers
+        class DataModels
+        class ExpressRoutes
+        class Middleware
+    }
+
+    namespace ML_Layer {
+        class TrainingScripts
+        class InferenceService
+        class ModelRegistry
+    }
+
+    Client_Layer ..> Server_Layer : HTTP/JSON
+    Server_Layer ..> ML_Layer : Internal API

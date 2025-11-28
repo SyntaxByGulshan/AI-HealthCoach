@@ -1,0 +1,55 @@
+classDiagram
+    class UserProfile {
+        +String id
+        +String name
+        +Int age
+        +String gender
+        +Float height
+        +Float weight
+        +String goal
+        +updateProfile()
+        +calculateBMI()
+    }
+
+    class DailyLog {
+        +Date date
+        +Int waterIntake
+        +Float sleepHours
+        +Int steps
+        +List~String~ completedHabits
+        +addWater(amount)
+        +updateSleep(hours)
+        +toggleHabit(habitId)
+    }
+
+    class Plan {
+        +String id
+        +String type
+        +Date startDate
+        +Date endDate
+        +Object content
+        +generate()
+        +validate()
+    }
+
+    class DietPlan {
+        +List~Meal~ meals
+        +getCalories()
+    }
+
+    class WorkoutPlan {
+        +List~Exercise~ exercises
+        +getDifficulty()
+    }
+
+    class CaloriePredictor {
+        +RandomForestRegressor model
+        +predict(age, gender, weight, height, activity)
+        +train(dataset)
+    }
+
+    UserProfile "1" -- "1..*" DailyLog : tracks
+    UserProfile "1" -- "1..*" Plan : has
+    Plan <|-- DietPlan
+    Plan <|-- WorkoutPlan
+    CaloriePredictor ..> UserProfile : uses

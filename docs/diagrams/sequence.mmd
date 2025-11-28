@@ -1,0 +1,37 @@
+sequenceDiagram
+    participant User
+    participant UI as React Component
+    participant Controller as Redux Thunk
+    participant ML as CaloriePredictor
+    participant API as Express API
+    participant DB as MongoDB
+    participant Service as AI Service
+    participant Gemini as Google API
+    participant Store as Redux Store
+
+    User->>UI: Click "Generate Diet Plan"
+    UI->>Controller: dispatch(generateDietPlan(userProfile))
+    
+    Controller->>ML: predict(userProfile)
+    ML-->>Controller: Target Calories (e.g. 2200)
+
+    Controller->>API: POST /api/plans/generate
+    API->>Service: callGenerateAPI(prompt + calories)
+    Service->>Gemini: POST /v1beta/models/gemini-1.5-flash:generateContent
+    activate Gemini
+    Gemini-->>Service: JSON Response (Weekly Plan)
+    deactivate Gemini
+    
+    alt Success
+        Service-->>API: Parsed Plan Object
+        API->>DB: Save Plan
+        API-->>Controller: Plan Data
+        Controller->>Store: dispatch(setDietPlan(plan))
+        Store-->>UI: State Updated
+        UI-->>User: Display Plan
+    else Failure
+        Service-->>API: Error
+        API-->>Controller: Error Response
+        Controller->>Store: dispatch(setFallbackPlan())
+        UI-->>User: Display Fallback Plan + Error Toast
+    end
