@@ -224,11 +224,11 @@ const DailyHabits: React.FC = () => {
                         <div className="w-full h-2 bg-gray-700/50 rounded-full mb-3 overflow-hidden">
                             <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-500 ease-out" style={{ width: `${waterProgress}%` }} />
                         </div>
-                        <div className="grid grid-cols-4 gap-2">
-                            <button onClick={() => handleWaterUpdate(250)} className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-semibold transition-all">+250ml</button>
-                            <button onClick={() => handleWaterUpdate(500)} className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-semibold transition-all">+500ml</button>
-                            <button onClick={() => handleWaterUpdate(1000)} className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-semibold transition-all">+1L</button>
-                            <button onClick={() => handleWaterUpdate(-250)} className="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-sm font-semibold transition-all">-250ml</button>
+                        <div className="flex  gap-2 flex-wrap justify-between md:justify-between justify-center ">
+                            <button onClick={() => handleWaterUpdate(250)} className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-semibold transition-all">+250ml</button>
+                            <button onClick={() => handleWaterUpdate(500)} className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-semibold transition-all">+500ml</button>
+                            <button onClick={() => handleWaterUpdate(1000)} className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-semibold transition-all">+1L</button>
+                            <button onClick={() => handleWaterUpdate(-250)} className="flex-1 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-sm font-semibold transition-all">-250ml</button>
                         </div>
                     </div>
 
@@ -246,11 +246,11 @@ const DailyHabits: React.FC = () => {
                         <div className="w-full h-2 bg-gray-700/50 rounded-full mb-3 overflow-hidden">
                             <div className="h-full bg-gradient-to-r from-purple-500 to-pink-400 rounded-full transition-all duration-500 ease-out" style={{ width: `${sleepProgress}%` }} />
                         </div>
-                        <div className="grid grid-cols-4 gap-2">
-                            <button onClick={() => handleSleepUpdate(0.5)} className="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm font-semibold transition-all">+0.5h</button>
-                            <button onClick={() => handleSleepUpdate(1)} className="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm font-semibold transition-all">+1h</button>
-                            <button onClick={() => handleSleepUpdate(2)} className="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm font-semibold transition-all">+2h</button>
-                            <button onClick={() => handleSleepUpdate(-0.5)} className="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-sm font-semibold transition-all">-0.5h</button>
+                        <div className="flex  gap-2 flex-wrap md:justify-between justify-center">
+                            <button onClick={() => handleSleepUpdate(0.5)} className="flex-1 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm font-semibold transition-all">+0.5h</button>
+                            <button onClick={() => handleSleepUpdate(1)} className="flex-1 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm font-semibold transition-all">+1h</button>
+                            <button onClick={() => handleSleepUpdate(2)} className="flex-1 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm font-semibold transition-all">+2h</button>
+                            <button onClick={() => handleSleepUpdate(-0.5)} className="flex-1 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-sm font-semibold transition-all">-0.5h</button>
                         </div>
                     </div>
                 </div>
