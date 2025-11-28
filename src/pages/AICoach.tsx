@@ -25,7 +25,7 @@ const AICoach: React.FC = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Redux Data
-    const user = useSelector((state: AppRootState) => state.user);
+    const user = useSelector((state: AppRootState) => state.user.userData);
     const diet = useSelector((state: AppRootState) => state.diet);
     const workout = useSelector((state: AppRootState) => state.workout);
     const dailyHabits = useSelector((state: AppRootState) => state.dailyHabits);
@@ -45,7 +45,7 @@ const AICoach: React.FC = () => {
         // dailyHabits structure might need adjustment based on actual slice, assuming it has current day data or similar
         // For now, let's use what we have. If dailyHabits is just current state:
 
-        let context = `User Profile: Name: ${user.name}, Age: ${user.age}, Weight: ${user.weight}kg, Height: ${user.height}cm, Goal: ${user.goals}\n`;
+        let context = `User Profile: Name: ${user?.name}, Age: ${user?.age}, Weight: ${user?.weight}kg, Height: ${user?.height}cm, Goal: ${user?.goal}\n`;
 
         context += `Date: ${today}\n`;
 
@@ -70,9 +70,9 @@ const AICoach: React.FC = () => {
 
         // Add Daily Habits if available (assuming simple state for now)
         context += `Habits:\n`;
-        context += `  Water: ${dailyHabits.waterIntake}L\n`;
-        context += `  Sleep: ${dailyHabits.sleepHours}h\n`;
-        context += `  Mood: ${dailyHabits.mood}\n`;
+        context += `  Water: ${dailyHabits.habits.waterIntake}L\n`;
+        context += `  Sleep: ${dailyHabits.habits.sleepHours}h\n`;
+        context += `  Mood: ${dailyHabits.habits.mood}\n`;
 
         return context;
     };
@@ -134,8 +134,8 @@ const AICoach: React.FC = () => {
                             </div>
                             <div
                                 className={`max-w-[80%] p-3 rounded-2xl ${msg.role === 'user'
-                                        ? 'bg-teal-600 text-white rounded-tr-none'
-                                        : 'bg-gray-800 text-gray-200 rounded-tl-none'
+                                    ? 'bg-teal-600 text-white rounded-tr-none'
+                                    : 'bg-gray-800 text-gray-200 rounded-tl-none'
                                     }`}
                             >
                                 <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
