@@ -33,3 +33,13 @@ export interface Goal {
     label: string;
     isCompleted: boolean;
 }
+
+export interface GoalStatus {
+    waterGoalMet: boolean;
+    sleepGoalMet: boolean;
+    dietGoalMet: boolean;
+    workoutGoalMet: boolean;
+    totalCompleted: number;
+    totalGoals: number;
+}
+

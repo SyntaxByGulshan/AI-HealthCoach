@@ -136,21 +136,31 @@ const DailyHabits: React.FC = () => {
     const moods = ['Happy', 'Sad', 'Neutral', 'Anxious', 'Energetic', 'Tired', 'Excited'];
 
     return (
-        <div className="max-w-7xl mx-auto p-4 md:p-8">
-            {/* Header */}
-            <div className="mb-8">
-                <div className="flex items-center gap-4 mb-2">
-                    <Calendar size={40} className="text-teal-400" />
-                    <h1 className="text-2xl md:text-4xl font-bold text-white">Daily Habits</h1>
+        <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+            {/* Gradient Header */}
+            <div className="mb-6 animate-fade-in">
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/20 via-teal-500/20 to-purple-500/20 p-6 md:p-8 border border-blue-500/30">
+                    <div className="relative z-10 flex items-center gap-4">
+                        <div className="p-3 bg-gradient-to-br from-teal-500/30 to-teal-600/30 rounded-xl">
+                            <Calendar size={40} className="text-teal-400" />
+                        </div>
+                        <div>
+                            <h1 className="text-3xl md:text-4xl font-bold text-white bg-gradient-to-r from-teal-400 to-blue-400 bg-clip-text text-transparent">
+                                Daily Habits
+                            </h1>
+                            <p className="text-gray-300 text-base md:text-lg mt-1">
+                                Track your daily habits and build a healthier lifestyle
+                            </p>
+                        </div>
+                    </div>
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-transparent rounded-full blur-3xl"></div>
+                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-teal-500/10 to-transparent rounded-full blur-3xl"></div>
                 </div>
-                <p className="text-gray-400 text-lg">
-                    Track your daily habits and build a healthier lifestyle
-                </p>
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-                <div className="glass-card p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="group glass-card p-6 hover:shadow-lg hover:shadow-teal-500/20 transition-all duration-300 transform hover:-translate-y-1 border border-gray-700/30 hover:border-teal-500/50">
                     <div className="flex items-center gap-3 mb-2">
                         <div className="p-2 bg-teal-500/20 rounded-lg">
                             <Calendar className="text-teal-400" size={24} />
@@ -164,9 +174,9 @@ const DailyHabits: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="glass-card p-6">
+                <div className="group glass-card p-6 hover:shadow-lg hover:shadow-green-500/20 transition-all duration-300 transform hover:-translate-y-1 border border-gray-700/30 hover:border-green-500/50">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-green-500/20 rounded-lg">
+                        <div className="p-2 bg-gradient-to-br from-green-500/20 to-green-600/20 rounded-lg group-hover:scale-110 transition-transform">
                             <TrendingUp className="text-green-400" size={24} />
                         </div>
                         <div>
@@ -178,9 +188,9 @@ const DailyHabits: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="glass-card p-4 md:p-6">
+                <div className="group glass-card p-4 md:p-6 hover:shadow-lg hover:shadow-yellow-500/20 transition-all duration-300 transform hover:-translate-y-1 border border-gray-700/30 hover:border-yellow-500/50">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="p-2 bg-yellow-500/20 rounded-lg">
+                        <div className="p-2 bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 rounded-lg group-hover:scale-110 transition-transform">
                             <Award className="text-yellow-400" size={24} />
                         </div>
                         <div>
@@ -194,16 +204,16 @@ const DailyHabits: React.FC = () => {
             </div>
 
             {/* Daily Goals Section */}
-            <div className="mb-12">
-                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                    <Award className="text-yellow-400" size={28} />
+            <div>
+                <h2 className="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <div className="w-1 h-6 bg-gradient-to-b from-yellow-400 to-orange-400 rounded-full"></div>
                     Daily Goals
                 </h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Water Intake */}
-                    <div className="glass-card p-4 md:p-6 border-2 border-blue-500/30">
+                    <div className="group glass-card p-5 md:p-6 border-2 border-blue-500/30 hover:border-blue-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 transform hover:-translate-y-1">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-blue-500/20 rounded-lg">
+                            <div className="p-2.5 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-lg group-hover:scale-110 transition-transform">
                                 <Droplets size={24} className="text-blue-400" />
                             </div>
                             <div className="flex-1">
@@ -211,8 +221,8 @@ const DailyHabits: React.FC = () => {
                                 <p className="text-sm text-gray-400">{waterIntake} / {waterGoal} ml</p>
                             </div>
                         </div>
-                        <div className="w-full h-2 bg-gray-700 rounded-full mb-3">
-                            <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all" style={{ width: `${waterProgress}%` }} />
+                        <div className="w-full h-2 bg-gray-700/50 rounded-full mb-3 overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-500 ease-out" style={{ width: `${waterProgress}%` }} />
                         </div>
                         <div className="grid grid-cols-4 gap-2">
                             <button onClick={() => handleWaterUpdate(250)} className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-semibold transition-all">+250ml</button>
@@ -223,9 +233,9 @@ const DailyHabits: React.FC = () => {
                     </div>
 
                     {/* Sleep Hours */}
-                    <div className="glass-card p-4 md:p-6 border-2 border-purple-500/30">
+                    <div className="group glass-card p-5 md:p-6 border-2 border-purple-500/30 hover:border-purple-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 transform hover:-translate-y-1">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-purple-500/20 rounded-lg">
+                            <div className="p-2.5 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-lg group-hover:scale-110 transition-transform">
                                 <Moon size={24} className="text-purple-400" />
                             </div>
                             <div className="flex-1">
@@ -233,8 +243,8 @@ const DailyHabits: React.FC = () => {
                                 <p className="text-sm text-gray-400">{sleepHours.toFixed(1)} / {sleepGoal} hrs</p>
                             </div>
                         </div>
-                        <div className="w-full h-2 bg-gray-700 rounded-full mb-3">
-                            <div className="h-full bg-gradient-to-r from-purple-500 to-pink-400 rounded-full transition-all" style={{ width: `${sleepProgress}%` }} />
+                        <div className="w-full h-2 bg-gray-700/50 rounded-full mb-3 overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-purple-500 to-pink-400 rounded-full transition-all duration-500 ease-out" style={{ width: `${sleepProgress}%` }} />
                         </div>
                         <div className="grid grid-cols-4 gap-2">
                             <button onClick={() => handleSleepUpdate(0.5)} className="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm font-semibold transition-all">+0.5h</button>
@@ -247,9 +257,9 @@ const DailyHabits: React.FC = () => {
             </div>
 
             {/* Wellness Tracker Section */}
-            <div className="mb-12">
-                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                    <Heart className="text-pink-400" size={28} />
+            <div>
+                <h2 className="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <div className="w-1 h-6 bg-gradient-to-b from-pink-400 to-red-400 rounded-full"></div>
                     Wellness Tracker
                 </h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -372,8 +382,8 @@ const DailyHabits: React.FC = () => {
 
             {/* Optional Tracking Section */}
             <div>
-                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                    <TrendingUp className="text-teal-400" size={28} />
+                <h2 className="text-xl md:text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                    <div className="w-1 h-6 bg-gradient-to-b from-teal-400 to-green-400 rounded-full"></div>
                     Optional Tracking
                 </h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
