@@ -7,7 +7,6 @@ export interface MetricCardProps {
     borderColor: 'teal' | 'green';
     icon?: React.ReactNode;
 }
-
 export interface StatCardProps {
     icon: React.ReactNode;
     title: string;
