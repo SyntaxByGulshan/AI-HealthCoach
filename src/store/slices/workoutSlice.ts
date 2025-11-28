@@ -1,4 +1,6 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+
+import { createSlice} from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 
 export interface DailyWorkout {
     date: string;
@@ -12,8 +14,9 @@ interface WorkoutState {
     currentDate: string;
 }
 
+const storedHistory = localStorage.getItem("workoutHistory");
 const initialState: WorkoutState = {
-    history: {},
+    history: storedHistory ? JSON.parse(storedHistory) : {},
     currentDate: new Date().toISOString().split('T')[0],
 };
 
@@ -27,17 +30,17 @@ const workoutSlice = createSlice({
         updateWorkout: (state, action: PayloadAction<{ date: string; field: keyof Omit<DailyWorkout, 'date'>; value: number }>) => {
             const { date, field, value } = action.payload;
             if (!state.history[date]) {
-                state.history[date] = {
-                    date,
-                    walking: 0,
-                    running: 0,
-                    gymTime: 0,
-                };
+                state.history[date] = { date, walking: 0, running: 0, gymTime: 0 };
             }
             state.history[date][field] = value;
+            localStorage.setItem("workoutHistory", JSON.stringify(state.history));
+        },
+        clearWorkoutHistory: (state) => {
+            state.history = {};
+            localStorage.removeItem("workoutHistory");
         },
     },
 });
 
-export const { setCurrentDate, updateWorkout } = workoutSlice.actions;
+export const { setCurrentDate, updateWorkout, clearWorkoutHistory } = workoutSlice.actions;
 export default workoutSlice.reducer;
