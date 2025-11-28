@@ -1,5 +1,6 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 export interface MealItem {
     id: string;
     name: string;
@@ -20,8 +21,9 @@ interface DietState {
     currentDate: string;
 }
 
+const storedHistory = localStorage.getItem("dietHistory");
 const initialState: DietState = {
-    history: {},
+    history: storedHistory ? JSON.parse(storedHistory) : {},
     currentDate: new Date().toISOString().split('T')[0],
 };
 
@@ -44,15 +46,21 @@ const dietSlice = createSlice({
                 };
             }
             state.history[date][type].push(item);
+            localStorage.setItem("dietHistory", JSON.stringify(state.history));
         },
         removeMeal: (state, action: PayloadAction<{ date: string; type: keyof Omit<DailyDiet, 'date'>; id: string }>) => {
             const { date, type, id } = action.payload;
             if (state.history[date]) {
-                state.history[date][type] = state.history[date][type].filter((item) => item.id !== id);
+                state.history[date][type] = state.history[date][type].filter(item => item.id !== id);
+                localStorage.setItem("dietHistory", JSON.stringify(state.history));
             }
+        },
+        clearDietHistory: (state) => {
+            state.history = {};
+            localStorage.removeItem("dietHistory");
         },
     },
 });
 
-export const { setCurrentDate, addMeal, removeMeal } = dietSlice.actions;
+export const { setCurrentDate, addMeal, removeMeal, clearDietHistory } = dietSlice.actions;
 export default dietSlice.reducer;
