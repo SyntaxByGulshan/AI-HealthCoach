@@ -1,12 +1,6 @@
 // TypeScript interfaces for component props and data structures
 
-export interface MetricCardProps {
-    title: string;
-    value: number | string;
-    subtitle: string;
-    borderColor: 'teal' | 'green';
-    icon?: React.ReactNode;
-}
+
 export interface StatCardProps {
     icon: React.ReactNode;
     title: string;
@@ -14,12 +8,7 @@ export interface StatCardProps {
     target: string;
 }
 
-export interface DailyGoalItemProps {
-    id: string;
-    label: string;
-    isCompleted: boolean;
-    onToggle: (id: string) => void;
-}
+
 
 export interface NavItem {
     id: string;
