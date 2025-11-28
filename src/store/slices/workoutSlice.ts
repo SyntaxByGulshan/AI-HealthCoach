@@ -15,6 +15,7 @@ interface WorkoutState {
 }
 
 const storedHistory = localStorage.getItem("workoutHistory");
+
 const initialState: WorkoutState = {
     history: storedHistory ? JSON.parse(storedHistory) : {},
     currentDate: new Date().toISOString().split('T')[0],

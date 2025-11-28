@@ -11,7 +11,7 @@ const Dashboard: React.FC = () => {
     const todayDate = new Date().toISOString().split('T')[0];
     const todayDiet = useAppSelector((state) => state.diet.history[todayDate]);
     const todayWorkout = useAppSelector((state) => state.workout.history[todayDate]);
-
+    const user = useAppSelector((state) => state.user);
     // Calculate actual values
     const waterIntake = todayHabits?.waterIntake || 0;
     const sleepHours = todayHabits?.sleepHours || 0;
@@ -27,7 +27,7 @@ const Dashboard: React.FC = () => {
             {/* Header */}
             <div className="mb-8 animate-fade-in">
                 <h1 className="text-3xl font-bold text-white mb-2">
-                    Welcome back! 👋
+                    Welcome back {user.userData?.name}
                 </h1>
                 <p className="text-gray-400 mb-6">
                     Track your progress and achieve your daily health goals

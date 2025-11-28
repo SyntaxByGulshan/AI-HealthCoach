@@ -54,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                         <div className="w-8 h-8 rounded-lg  flex items-center justify-center">
                             <span className="text-white font-bold text-lg"><img src="./logo.png" alt="AI" /></span>
                         </div>
-                        <span className="text-xl font-bold text-gradient md:hidden xl:inline">Pulse AI</span>
+                        <span className="text-xl font-bold text-gradient md:hidden xl:inline">PeakFit AI</span>
                     </div>
                     <button
                         onClick={onClose}

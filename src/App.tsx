@@ -33,7 +33,7 @@ function App() {
             >
               <Menu size={24} />
             </button>
-            <span className="text-xl font-bold text-gradient">Pulse AI</span>
+            <span className="text-xl font-bold text-gradient">PeakFit AI</span>
           </div>
 
           <Routes>
