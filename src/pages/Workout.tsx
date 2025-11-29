@@ -1,8 +1,8 @@
-import React from 'react';
-import { Dumbbell, Footprints, Timer, Activity, TrendingUp } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Dumbbell, Footprints, Timer, Activity, TrendingUp, Sparkles, Loader2, ChevronDown, ChevronUp, Plus } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { type AppRootState } from '../store/store';
-import { updateWorkout, type DailyWorkout } from '../store/slices/workoutSlice';
+import { updateWorkout, fetchStructuredWorkoutPlan, type DailyWorkout } from '../store/slices/workoutSlice';
 
 const WORKOUT_TYPES: { key: keyof Omit<DailyWorkout, 'date'>; label: string; icon: React.ReactNode; color: string; gradient: string }[] = [
     {
@@ -32,15 +32,47 @@ const Workout: React.FC = () => {
     const dispatch = useDispatch();
     const currentDate = useSelector((state: AppRootState) => state.workout.currentDate);
     const workoutHistory = useSelector((state: AppRootState) => state.workout.history);
+    const { structuredPlan, planDate, loading, error } = useSelector((state: AppRootState) => state.workout);
+    const user = useSelector((state: AppRootState) => state.user.userData);
+
     const currentWorkout = workoutHistory[currentDate] || {
         walking: 0,
         running: 0,
         gymTime: 0,
     };
 
+    const [showAIPlan, setShowAIPlan] = useState(true);
+
+    // Auto-load workout plan on mount if needed
+    useEffect(() => {
+        const today = new Date().toISOString().split('T')[0];
+        const needsNewPlan = !structuredPlan || planDate !== today;
+
+        if (needsNewPlan && user && !loading) {
+            dispatch(fetchStructuredWorkoutPlan({ userProfile: user, goal: user.goal }) as any);
+        }
+    }, [dispatch, structuredPlan, planDate, user, loading]);
+
     const handleUpdate = (key: keyof Omit<DailyWorkout, 'date'>, value: string) => {
         const numValue = parseInt(value) || 0;
         dispatch(updateWorkout({ date: currentDate, field: key, value: numValue }));
+    };
+
+    const handleAddFromAIPlan = (duration: number, type: 'cardio' | 'strength' | 'flexibility') => {
+        // Map exercise types to workout fields
+        if (type === 'cardio') {
+            // For cardio, add to running (you can adjust this logic)
+            const currentValue = currentWorkout.running || 0;
+            dispatch(updateWorkout({ date: currentDate, field: 'running', value: currentValue + duration }));
+        } else if (type === 'strength') {
+            // For strength, add to gym time
+            const currentValue = currentWorkout.gymTime || 0;
+            dispatch(updateWorkout({ date: currentDate, field: 'gymTime', value: currentValue + duration }));
+        } else if (type === 'flexibility') {
+            // For flexibility, add to walking (or you can create a new field)
+            const currentValue = currentWorkout.walking || 0;
+            dispatch(updateWorkout({ date: currentDate, field: 'walking', value: currentValue + duration }));
+        }
     };
 
     const totalMinutes = (currentWorkout.walking || 0) + (currentWorkout.running || 0) + (currentWorkout.gymTime || 0);
@@ -67,6 +99,145 @@ const Workout: React.FC = () => {
                     <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-teal-500/10 to-transparent rounded-full blur-3xl"></div>
                 </div>
             </div>
+
+            {/* AI Recommended Workout Plan */}
+            {structuredPlan && (
+                <div className="glass-card p-6 border-2 border-teal-500/30 animate-fade-in">
+                    <div
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => setShowAIPlan(!showAIPlan)}
+                    >
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-gradient-to-br from-teal-500/30 to-teal-600/30 rounded-lg">
+                                <Sparkles size={24} className="text-teal-400" />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold text-white">AI Recommended Workout</h2>
+                                <p className="text-sm text-gray-400">Personalized for your fitness goals</p>
+                            </div>
+                        </div>
+                        {showAIPlan ? <ChevronUp className="text-gray-400" /> : <ChevronDown className="text-gray-400" />}
+                    </div>
+
+                    {showAIPlan && (
+                        <div className="mt-6 space-y-4">
+                            {/* Explanation */}
+                            <div className="bg-teal-500/10 border border-teal-500/30 rounded-lg p-4">
+                                <p className="text-gray-300 text-sm leading-relaxed">{structuredPlan.explanation}</p>
+                            </div>
+
+                            {/* Cardio Exercises */}
+                            {structuredPlan.cardio && structuredPlan.cardio.length > 0 && (
+                                <div>
+                                    <h3 className="text-lg font-semibold text-teal-400 mb-3 flex items-center gap-2">
+                                        <Activity size={20} />
+                                        Cardio Exercises
+                                    </h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        {structuredPlan.cardio.map((exercise, idx) => (
+                                            <div key={idx} className="bg-gray-800/50 rounded-lg p-4 flex justify-between items-center">
+                                                <div>
+                                                    <p className="font-medium text-white">{exercise.name}</p>
+                                                    <p className="text-sm text-gray-400">
+                                                        {exercise.duration} min • {exercise.intensity}
+                                                    </p>
+                                                </div>
+                                                <button
+                                                    onClick={() => handleAddFromAIPlan(exercise.duration, 'cardio')}
+                                                    className="p-2 bg-teal-500/20 hover:bg-teal-500/30 rounded-lg text-teal-400 transition-colors"
+                                                    title="Add to Running"
+                                                >
+                                                    <Plus size={18} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Strength Exercises */}
+                            {structuredPlan.strength && structuredPlan.strength.length > 0 && (
+                                <div>
+                                    <h3 className="text-lg font-semibold text-orange-400 mb-3 flex items-center gap-2">
+                                        <Dumbbell size={20} />
+                                        Strength Training
+                                    </h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        {structuredPlan.strength.map((exercise, idx) => (
+                                            <div key={idx} className="bg-gray-800/50 rounded-lg p-4 flex justify-between items-center">
+                                                <div>
+                                                    <p className="font-medium text-white">{exercise.name}</p>
+                                                    <p className="text-sm text-gray-400">
+                                                        {exercise.duration} min
+                                                        {exercise.sets && exercise.reps && ` • ${exercise.sets}×${exercise.reps}`}
+                                                    </p>
+                                                </div>
+                                                <button
+                                                    onClick={() => handleAddFromAIPlan(exercise.duration, 'strength')}
+                                                    className="p-2 bg-orange-500/20 hover:bg-orange-500/30 rounded-lg text-orange-400 transition-colors"
+                                                    title="Add to Gym Time"
+                                                >
+                                                    <Plus size={18} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Flexibility Exercises */}
+                            {structuredPlan.flexibility && structuredPlan.flexibility.length > 0 && (
+                                <div>
+                                    <h3 className="text-lg font-semibold text-blue-400 mb-3 flex items-center gap-2">
+                                        <Timer size={20} />
+                                        Flexibility & Recovery
+                                    </h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        {structuredPlan.flexibility.map((exercise, idx) => (
+                                            <div key={idx} className="bg-gray-800/50 rounded-lg p-4 flex justify-between items-center">
+                                                <div>
+                                                    <p className="font-medium text-white">{exercise.name}</p>
+                                                    <p className="text-sm text-gray-400">{exercise.duration} min</p>
+                                                </div>
+                                                <button
+                                                    onClick={() => handleAddFromAIPlan(exercise.duration, 'flexibility')}
+                                                    className="p-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg text-blue-400 transition-colors"
+                                                    title="Add to Walking"
+                                                >
+                                                    <Plus size={18} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Total Duration */}
+                            <div className="bg-gray-800/30 rounded-lg p-4 text-center">
+                                <p className="text-gray-400 text-sm mb-1">Recommended Total Duration</p>
+                                <p className="text-3xl font-bold bg-gradient-to-r from-teal-400 to-orange-400 bg-clip-text text-transparent">
+                                    {structuredPlan.totalDuration} min
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Loading State */}
+            {loading && (
+                <div className="glass-card p-8 text-center">
+                    <Loader2 className="animate-spin text-teal-400 mx-auto mb-3" size={40} />
+                    <p className="text-gray-400">Generating your personalized workout plan...</p>
+                </div>
+            )}
+
+            {/* Error State */}
+            {error && (
+                <div className="glass-card p-4 border-2 border-red-500/30 bg-red-500/10">
+                    <p className="text-red-400 text-sm">⚠️ {error}</p>
+                </div>
+            )}
 
             {/* Workout Type Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Utensils, Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Utensils, Plus, Trash2, ChevronDown, ChevronUp, Sparkles, Loader2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { type AppRootState } from '../store/store';
-import { addMeal, removeMeal, type MealItem, type DailyDiet } from '../store/slices/dietSlice';
+import { addMeal, removeMeal, fetchStructuredDietPlan, type MealItem, type DailyDiet } from '../store/slices/dietSlice';
 import { v4 as uuidv4 } from 'uuid';
 
 const MEAL_TYPES: { key: keyof Omit<DailyDiet, 'date'>; label: string; color: string }[] = [
@@ -23,6 +23,9 @@ const DietPlan: React.FC = () => {
     const dispatch = useDispatch();
     const currentDate = useSelector((state: AppRootState) => state.diet.currentDate);
     const dietHistory = useSelector((state: AppRootState) => state.diet.history);
+    const { structuredPlan, planDate, loading, error } = useSelector((state: AppRootState) => state.diet);
+    const user = useSelector((state: AppRootState) => state.user.userData);
+
     const currentDiet = dietHistory[currentDate] || {
         breakfast: [],
         lunch: [],
@@ -37,6 +40,17 @@ const DietPlan: React.FC = () => {
         snack: true,
         dinner: true,
     });
+    const [showAIPlan, setShowAIPlan] = useState(true);
+
+    // Auto-load diet plan on mount if needed
+    useEffect(() => {
+        const today = new Date().toISOString().split('T')[0];
+        const needsNewPlan = !structuredPlan || planDate !== today;
+
+        if (needsNewPlan && user && !loading) {
+            dispatch(fetchStructuredDietPlan({ userProfile: user, goal: user.goal }) as any);
+        }
+    }, [dispatch, structuredPlan, planDate, user, loading]);
 
     const toggleSection = (type: string) => {
         setExpandedSections((prev) => ({ ...prev, [type]: !prev[type] }));
@@ -66,6 +80,16 @@ const DietPlan: React.FC = () => {
 
     const handleRemoveMeal = (type: keyof Omit<DailyDiet, 'date'>, id: string) => {
         dispatch(removeMeal({ date: currentDate, type, id }));
+    };
+
+    const handleAddFromAIPlan = (type: keyof Omit<DailyDiet, 'date'>, name: string, calories: number) => {
+        const newItem: MealItem = {
+            id: uuidv4(),
+            name,
+            calories,
+            isCustom: false,
+        };
+        dispatch(addMeal({ date: currentDate, type, item: newItem }));
     };
 
     const getColorClasses = (color: string) => {
@@ -124,7 +148,7 @@ const DietPlan: React.FC = () => {
                                 Diet Plan
                             </h1>
                             <p className="text-gray-300 text-base md:text-lg mt-1">
-                                Track your meals and stay on target
+                                AI-powered personalized meal recommendations
                             </p>
                         </div>
                     </div>
@@ -132,6 +156,77 @@ const DietPlan: React.FC = () => {
                     <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-green-500/10 to-transparent rounded-full blur-3xl"></div>
                 </div>
             </div>
+
+            {/* AI Generated Plan Section */}
+            {loading && (
+                <div className="glass-card p-8 text-center">
+                    <Loader2 className="animate-spin mx-auto mb-4 text-teal-400" size={48} />
+                    <p className="text-gray-300 text-lg">Generating your personalized diet plan...</p>
+                </div>
+            )}
+
+            {error && (
+                <div className="glass-card p-6 border border-red-500/30 bg-red-500/10">
+                    <p className="text-red-400">Error: {error}</p>
+                </div>
+            )}
+
+            {structuredPlan && !loading && (
+                <div className="glass-card p-6 border border-teal-500/30">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                            <Sparkles className="text-teal-400" size={24} />
+                            <h2 className="text-xl font-bold text-white">AI Recommended Plan</h2>
+                        </div>
+                        <button
+                            onClick={() => setShowAIPlan(!showAIPlan)}
+                            className="text-sm text-teal-400 hover:text-teal-300"
+                        >
+                            {showAIPlan ? 'Hide' : 'Show'}
+                        </button>
+                    </div>
+
+                    {showAIPlan && (
+                        <>
+                            <p className="text-gray-300 mb-4 text-sm">{structuredPlan.explanation}</p>
+                            <div className="grid md:grid-cols-2 gap-4">
+                                {MEAL_TYPES.map(({ key, label, color }) => {
+                                    const colorClasses = getColorClasses(color);
+                                    const aiMeals = structuredPlan[key] || [];
+
+                                    return (
+                                        <div key={key} className={`p-4 rounded-lg border ${colorClasses.border} bg-gray-900/30`}>
+                                            <h3 className={`font-bold mb-3 bg-gradient-to-r ${colorClasses.textGradient} bg-clip-text text-transparent`}>
+                                                {label}
+                                            </h3>
+                                            <div className="space-y-2">
+                                                {aiMeals.map((meal, idx) => (
+                                                    <div key={idx} className="flex items-center justify-between text-sm">
+                                                        <span className="text-gray-200">{meal.name}</span>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-gray-400">{meal.calories} cal</span>
+                                                            <button
+                                                                onClick={() => handleAddFromAIPlan(key, meal.name, meal.calories)}
+                                                                className={`p-1 rounded ${colorClasses.button} border-0`}
+                                                                title="Add to my plan"
+                                                            >
+                                                                <Plus size={14} />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            <div className="mt-4 text-center text-gray-400 text-sm">
+                                Total Calories: <span className="text-teal-400 font-bold">{structuredPlan.totalCalories}</span>
+                            </div>
+                        </>
+                    )}
+                </div>
+            )}
 
             {/* Meal Type Cards */}
             <div className="space-y-4">
@@ -174,7 +269,10 @@ const DietPlan: React.FC = () => {
                                         )}
                                         {currentDiet[key]?.map((item) => (
                                             <div key={item.id} className="flex items-center justify-between bg-gray-900/50 p-3 rounded-lg border border-gray-700/30 hover:border-gray-600/50 transition-colors group/item">
-                                                <span className="text-gray-200 font-medium">{item.name}</span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-gray-200 font-medium">{item.name}</span>
+                                                    {item.calories && <span className="text-gray-400 text-sm">({item.calories} cal)</span>}
+                                                </div>
                                                 <button
                                                     onClick={() => handleRemoveMeal(key, item.id)}
                                                     className="text-red-400 hover:text-red-300 p-2 rounded-md hover:bg-red-400/10 transition-all opacity-0 group-hover/item:opacity-100"

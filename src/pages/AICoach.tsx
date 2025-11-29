@@ -42,8 +42,6 @@ const AICoach: React.FC = () => {
         const today = new Date().toISOString().split('T')[0];
         const todaysDiet = diet.history[today];
         const todaysWorkout = workout.history[today];
-        // dailyHabits structure might need adjustment based on actual slice, assuming it has current day data or similar
-        // For now, let's use what we have. If dailyHabits is just current state:
 
         let context = `User Profile: Name: ${user?.name}, Age: ${user?.age}, Weight: ${user?.weight}kg, Height: ${user?.height}cm, Goal: ${user?.goal}\n`;
 
@@ -68,7 +66,6 @@ const AICoach: React.FC = () => {
             context += `Workout: No activity logged today.\n`;
         }
 
-        // Add Daily Habits if available (assuming simple state for now)
         context += `Habits:\n`;
         context += `  Water: ${dailyHabits.habits.waterIntake}L\n`;
         context += `  Sleep: ${dailyHabits.habits.sleepHours}h\n`;
