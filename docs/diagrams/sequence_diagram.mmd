@@ -1,0 +1,18 @@
+sequenceDiagram
+    participant User
+    participant UI as React UI
+    participant Store as Redux Store
+    participant Service as Gemini Service
+    participant Gemini as Gemini API
+
+    User->>UI: Request Diet/Workout Plan
+    UI->>Store: Fetch User Data
+    Store-->>UI: Return User Data
+    UI->>Service: Send User Context
+    Service->>Service: Build Prompt
+    Service->>Gemini: Send Prompt
+    Gemini-->>Service: Return AI Plan
+    Service->>UI: Return Plan Data
+    UI->>Store: Save Plan Data
+    Store-->>UI: Updated State
+    UI->>User: Display Diet/Workout Plan

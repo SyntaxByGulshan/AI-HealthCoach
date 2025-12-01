@@ -1,0 +1,22 @@
+graph TD
+    subgraph Browser Client
+        UI[React UI Components]
+        Store[Redux Store]
+        LS[(LocalStorage)]
+        Service[Gemini Service]
+    end
+    
+    subgraph Cloud
+        Gemini[Google Gemini API]
+    end
+
+    UI -- Dispatch Action --> Store
+    Store -- Update State --> UI
+    Store -- Write --> LS
+    LS -- Hydrate State --> Store
+
+    UI -- AI Request --> Service
+    Service -- Fetch Context --> Store
+    Service -- Send Prompt --> Gemini
+    Gemini -- Return Response --> Service
+    Service -- Return Data --> UI

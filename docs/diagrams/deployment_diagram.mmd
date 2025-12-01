@@ -1,0 +1,15 @@
+graph TD
+
+    subgraph Client[User Device / Browser]
+        A[React SPA Build Files]
+        B[Redux Store]
+        C[LocalStorage]
+    end
+
+    subgraph Cloud[AI Cloud Service]
+        D[Google Gemini API Server]
+    end
+
+    A --> B
+    B --> C
+    A --> D

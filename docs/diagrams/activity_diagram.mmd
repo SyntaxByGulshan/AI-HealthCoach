@@ -1,0 +1,11 @@
+flowchart TD
+    A[User Submits Profile or Goal] --> B[React UI Sends Request]
+    B --> C[Redux Stores User Data]
+    C --> D[Gemini Service Builds Prompt]
+    D --> E[Send Request to Google Gemini API]
+    E --> F{AI Response Success?}
+    F -->|Yes| G[Parse Response into Diet/Workout Plan]
+    F -->|No| H[Load Default Local Plan]
+    G --> I[Update Redux Store]
+    H --> I
+    I --> J[Display Plan to User on Dashboard]

@@ -1,0 +1,54 @@
+classDiagram
+    class UserProfile {
+        +string name
+        +int age
+        +float weight
+        +float height
+        +string gender
+        +string goal
+        +float BMI()
+        +float BMR()
+    }
+
+    class DailyHabit {
+        +string habitName
+        +boolean completed
+        +int points
+        +completeHabit()
+    }
+
+    class StepTracker {
+        +int steps
+        +setSteps()
+        +getSteps()
+    }
+
+    class DietPlan {
+        +string planText
+        +generateDiet()
+    }
+
+    class WorkoutPlan {
+        +string planText
+        +generateWorkout()
+    }
+
+    class GeminiService {
+        +string prompt
+        +generatePlan()
+        +sendRequest()
+    }
+
+    class ReduxStore {
+        +userSlice
+        +dietSlice
+        +workoutSlice
+        +habitSlice
+        +stepSlice
+    }
+
+    UserProfile --> ReduxStore
+    DailyHabit --> ReduxStore
+    DietPlan --> GeminiService
+    WorkoutPlan --> GeminiService
+    StepTracker --> ReduxStore
