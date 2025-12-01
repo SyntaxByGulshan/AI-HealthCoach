@@ -1,0 +1,36 @@
+graph TD
+
+    subgraph UI[UI Layer]
+        A1[Dashboard Component]
+        A2[Profile Component]
+        A3[DietPlan Component]
+        A4[Workout Component]
+        A5[Steps Tracker]
+        A6[Daily Habits]
+    end
+
+    subgraph Redux[State Management Layer]
+        B1[userSlice]
+        B2[dietSlice]
+        B3[workoutSlice]
+        B4[habitSlice]
+        B5[stepSlice]
+    end
+
+    subgraph Service[Service Layer]
+        C1[Gemini API Service]
+    end
+
+    subgraph Storage[Persistence Layer]
+        D1[LocalStorage]
+    end
+
+    subgraph ExternalAI[Cloud Layer]
+        E1[Google Gemini API]
+    end
+
+    UI --> Redux
+    Redux --> Storage
+    UI --> Service
+    Service --> Redux
+    Service --> E1
