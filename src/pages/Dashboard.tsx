@@ -1,13 +1,15 @@
 import React from 'react';
 import StatCard from '../components/StatCard';
-import { Activity, Award, Droplets, Moon, Utensils, Dumbbell, CheckCircle2, XCircle, User } from 'lucide-react';
-import { useGoalsCompleted, useTodayHabits, useUserBMI, WATER_GOAL, SLEEP_GOAL, WORKOUT_GOAL } from '../store/selectors';
+import { Activity, Award, Droplets, Moon, Utensils, Dumbbell, CheckCircle2, XCircle, User, Flame } from 'lucide-react';
+import { useGoalsCompleted, useTodayHabits, useUserBMI, useUserBMR, WATER_GOAL, SLEEP_GOAL, WORKOUT_GOAL } from '../store/selectors';
 import { useAppSelector } from '../store/hooks';
+
 
 const Dashboard: React.FC = () => {
     const goalsStatus = useGoalsCompleted();
     const todayHabits = useTodayHabits();
     const bmiData = useUserBMI();
+    const bmrData = useUserBMR();
     const todayDate = new Date().toISOString().split('T')[0];
     const todayDiet = useAppSelector((state) => state.diet.history[todayDate]);
     const todayWorkout = useAppSelector((state) => state.workout.history[todayDate]);
@@ -79,6 +81,37 @@ const Dashboard: React.FC = () => {
                                 <a href="/profile" className="text-indigo-400 hover:text-indigo-300 text-sm mt-2 underline">
                                     Update your profile
                                 </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* BMR Card */}
+            {bmrData.bmr !== null && (
+                <div className="mb-8 animate-fade-in">
+                    <div className="glass-card p-6 md:p-8 border-2 border-orange-500/30">
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className="p-3 bg-orange-500/20 rounded-xl">
+                                <Flame size={32} className="text-orange-400" />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold text-white">Basal Metabolic Rate (BMR)</h2>
+                                <p className="text-gray-400">{bmrData.description}</p>
+                            </div>
+                        </div>
+                        <div className="text-center py-4">
+                            <div className="text-6xl font-bold text-orange-400 mb-2">
+                                {bmrData.bmr}
+                            </div>
+                            <div className="text-gray-400 text-lg mb-4">
+                                Calories/Day
+                            </div>
+                            <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4 mt-4">
+                                <p className="text-gray-300 text-sm">
+                                    💡 This is the number of calories your body burns at complete rest.
+                                    Your actual daily calorie needs are higher when accounting for daily activities.
+                                </p>
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,6 @@
-# 3. System Development and Architecture Plan
+# Chapter 1: Introduction and Overview
 
-## 3.1 Overview
+## 1.1 System Overview
 
 The **AI Personal Health Coach** system integrates modern web technologies with **Generative Artificial Intelligence (GenAI)** to provide personalized health management. It delivers actionable health insights, AI-generated diet and workout plans, gamified progress tracking, and real-time user engagement through an interactive front-end interface.
 
