@@ -170,6 +170,40 @@ export const useUserBMI = () => {
 };
 
 /**
+ * Selector to calculate user's BMR (Basal Metabolic Rate)
+ * Uses the Mifflin-St Jeor Equation:
+ * For men: BMR = (10 × weight in kg) + (6.25 × height in cm) - (5 × age in years) + 5
+ * For women: BMR = (10 × weight in kg) + (6.25 × height in cm) - (5 × age in years) - 161
+ */
+export const useUserBMR = () => {
+    return useAppSelector((state: AppRootState) => {
+        const userData = state.user.userData;
+
+        if (!userData || !userData.weight || !userData.height || !userData.age) {
+            return {
+                bmr: null,
+                description: 'No data'
+            };
+        }
+
+        // Mifflin-St Jeor Equation
+        const baseCalculation = (10 * userData.weight) + (6.25 * userData.height) - (5 * userData.age);
+        
+        let bmr: number;
+        if (userData.gender.toLowerCase() === 'male') {
+            bmr = baseCalculation + 5;
+        } else {
+            bmr = baseCalculation - 161;
+        }
+
+        return {
+            bmr: Math.round(bmr), // Round to whole number
+            description: 'Calories burned at rest per day'
+        };
+    });
+};
+
+/**
  * Selector to get daily goals completion status
  */
 export const useGoalsCompleted = () => {
