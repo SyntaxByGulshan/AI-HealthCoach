@@ -241,8 +241,8 @@ This project addresses these gaps by combining free AI-powered planning with com
 
 ### 6.1 System Architecture
 
-#### 6.1.1 Current Architecture (Client-Side SPA)
-The application follows a **Single Page Application (SPA)** architecture:
+#### 6.1.1 Current Architecture (Hybrid Full-Stack)
+The application follows a **Hybrid Full-Stack Architecture** with separated frontend, backend ML service, and cloud AI:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -268,9 +268,9 @@ The application follows a **Single Page Application (SPA)** architecture:
 │  │                      │                          │    │
 │  │                      ▼                          │    │
 │  │  ┌──────────────────────────────────────────┐  │    │
-│  │  │      Service Layer (Gemini Integration)  │  │    │
-│  │  │  - AI Plan Generation                    │  │    │
-│  │  │  - Chat Interface                        │  │    │
+│  │  │      Service Layer                       │  │    │
+│  │  │  - Gemini Integration (AI Plans/Chat)    │  │    │
+│  │  │  - Backend API Integration (ML/TDEE)     │  │    │
 │  │  │  - Structured Output Parsing             │  │    │
 │  │  └──────────────────────────────────────────┘  │    │
 │  │                      │                          │    │
@@ -287,11 +287,18 @@ The application follows a **Single Page Application (SPA)** architecture:
 │                         │                               │
 └─────────────────────────┼───────────────────────────────┘
                           │
-                          ▼
-                ┌──────────────────────┐
-                │  Google Gemini API   │
-                │  (External Service)  │
-                └──────────────────────┘
+         ┌────────────────┴────────────────┐
+         │                                 │
+         ▼                                 ▼
+┌──────────────────────┐       ┌─────────────────────────┐
+│  Backend ML Service  │       │  Google Gemini API      │
+│    (FastAPI)         │       │  (External Service)     │
+│                      │       │                         │
+│  - TDEE Prediction   │       │  - Diet Plan Generation │
+│  - Random Forest ML  │       │  - Workout Plans        │
+│  - Feature Eng.      │       │  - AI Coach Chat        │
+│  - calorie_model     │       └─────────────────────────┘
+└──────────────────────┘
 ```
 
 #### 6.1.2 Component Architecture
@@ -431,7 +438,7 @@ Using Redux Toolkit with the following slice structure:
 
 ### 7.1 Technology Stack
 
-#### 7.1.1 Core Technologies
+#### 7.1.1 Frontend Technologies
 *   **React**: Version 19.2.0 - Latest stable release with improved performance [11]
 *   **TypeScript**: Version 5.9.3 - Strict typing for code reliability
 *   **Vite**: Version 7.2.4 - Modern build tool with HMR (Hot Module Replacement)
@@ -442,9 +449,19 @@ Using Redux Toolkit with the following slice structure:
 *   **Lucide React**: Version 0.555.0 - Modern icon library
 *   **React Router DOM**: Version 7.9.6 - Client-side routing
 
-#### 7.1.3 AI Integration
+#### 7.1.3 Backend Technologies
+*   **FastAPI**: Latest - Modern Python web framework for building APIs
+*   **Uvicorn**: Latest - ASGI server for FastAPI applications
+*   **Pydantic**: Latest - Data validation using Python type annotations
+*   **Scikit-learn**: Latest - Machine learning library for model deployment
+*   **Joblib**: Latest - Model serialization and deserialization
+*   **Pandas**: Latest - Data manipulation for feature engineering
+*   **NumPy**: Latest - Numerical computing for ML operations
+
+#### 7.1.4 AI Integration
 *   **Google Generative AI**: Version 0.24.1 - Official Google Gemini SDK [8]
 *   **Model**: gemini-1.5-flash - Fast, efficient model for text generation
+*   **Machine Learning Model**: Random Forest Regressor - TDEE/calorie prediction
 
 #### 7.1.4 Development Tools
 *   **ESLint**: Code quality and consistency
@@ -455,6 +472,12 @@ Using Redux Toolkit with the following slice structure:
 
 ```
 AI-HealthCoach/
+├── backend/                       # Backend ML Service
+│   ├── main.py                    # FastAPI application
+│   ├── calorie_model.joblib       # Trained ML model
+│   ├── requirements.txt           # Python dependencies
+│   ├── test_api.py                # API testing script
+│   └── check_features.py          # Feature validation
 ├── docs/                          # Documentation
 │   ├── PROJECT_REPORT.md
 │   ├── ARCHITECTURE.md
@@ -462,7 +485,7 @@ AI-HealthCoach/
 │   ├── UML_DIAGRAMS.md
 │   ├── WORKFLOWS.md
 │   └── diagrams/
-├── src/
+├── src/                           # Frontend Application
 │   ├── components/                # Reusable components
 │   │   ├── Sidebar.tsx
 │   │   └── StatsCard.tsx
@@ -484,7 +507,8 @@ AI-HealthCoach/
 │   │   ├── hooks.ts
 │   │   └── selectors.ts
 │   ├── services/                  # External services
-│   │   └── gemini.ts
+│   │   ├── gemini.ts              # Gemini AI integration
+│   │   └── api.ts                 # Backend API client
 │   ├── types.ts                   # TypeScript types
 │   ├── App.tsx                    # Main app component
 │   ├── App.css                    # App-specific styles
@@ -492,7 +516,7 @@ AI-HealthCoach/
 │   └── main.tsx                   # Entry point
 ├── public/                        # Static assets
 ├── index.html                     # HTML template
-├── package.json                   # Dependencies
+├── package.json                   # Frontend dependencies
 ├── tsconfig.json                  # TypeScript config
 ├── vite.config.ts                 # Vite config
 └── README.md                      # Project overview
@@ -647,6 +671,121 @@ Provide helpful, personalized advice.
   return result.response.text();
 };
 ```
+
+#### 7.3.6 Backend ML Service Implementation
+
+**FastAPI Application** (`backend/main.py`):
+```python
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+import joblib
+import pandas as pd
+
+app = FastAPI(
+    title="AI Health Coach API",
+    description="API for TDEE prediction and health metrics",
+    version="1.0.0"
+)
+
+# CORS Setup for frontend integration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# User input model with validation
+class UserStats(BaseModel):
+    age: int = Field(..., gt=0, lt=120)
+    gender: str = Field(..., description="male or female")
+    weight: float = Field(..., gt=20, lt=500, description="Weight in kg")
+    height: float = Field(..., gt=50, lt=300, description="Height in cm")
+    activity_level: str
+    goal: str = Field(..., description="lose, maintain, gain")
+    goal_weight: Optional[float] = None
+
+# Load trained Random Forest model
+model_data = joblib.load('calorie_model.joblib')
+
+@app.post("/predict")
+def predict_tdee(stats: UserStats):
+    # Calculate BMI
+    bmi = stats.weight / ((stats.height / 100) ** 2)
+    
+    # Calculate weight_diff for feature engineering
+    goal_weight = stats.goal_weight if stats.goal_weight else stats.weight
+    weight_diff = goal_weight - stats.weight
+    
+    # Prepare features for ML model
+    input_df = pd.DataFrame([{
+        'age': stats.age,
+        'gender': stats.gender.lower(),
+        'weight': stats.weight,
+        'height': stats.height,
+        'weight_diff': weight_diff,
+        'activity_level': stats.activity_level.lower(),
+        'goal': stats.goal.lower(),
+        'BMI': bmi
+    }])
+    
+    # Make prediction
+    prediction = model_data.predict(input_df)[0]
+    uncertainty = prediction * 0.05  # 5% uncertainty estimate
+    
+    return {
+        "tdee": round(float(prediction), 2),
+        "uncertainty": round(float(uncertainty), 2),
+        "unit": "kcal/day"
+    }
+```
+
+**Key Features**:
+*   **Pydantic Validation**: Automatic input validation with type checking and range constraints
+*   **Feature Engineering**: Calculates BMI and weight_diff on-the-fly to match model training
+*   **CORS Support**: Enables frontend integration from React development server
+*   **Error Handling**: Graceful failure with HTTP exceptions
+*   **Model Features**: `['age', 'gender', 'weight', 'height', 'weight_diff', 'activity_level', 'goal', 'BMI']`
+
+**Model Details**:
+*   **Algorithm**: Random Forest Regressor (`n_estimators=200`)
+*   **Preprocessing**: 
+    *   `StandardScaler` for numerical features (`age`, `weight`, `height`, `BMI`, `weight_diff`)
+    *   `OneHotEncoder` for categorical features (`gender`, `activity_level`, `goal`)
+*   **Input Features**: 8 features including demographics, physical stats, and goals
+*   **Output**: Total Daily Energy Expenditure (TDEE) in kcal/day
+*   **Uncertainty**: Conservative 5% margin of error
+*   **Serialization**: Joblib for model persistence (saves the entire pipeline including preprocessors)
+
+**Deployment**:
+```bash
+# Run backend server
+cd backend
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+**API Integration in Frontend** (`src/services/api.ts`):
+```typescript
+interface TDEEPrediction {
+  tdee: number;
+  uncertainty: number;
+  unit: string;
+}
+
+export const predictTDEE = async (userStats: UserProfile): Promise<TDEEPrediction> => {
+  const response = await fetch('http://localhost:8000/predict', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userStats)
+  });
+  
+  if (!response.ok) throw new Error('TDEE prediction failed');
+  return await response.json();
+};
+```
+
 
 ### 7.4 Responsive Design Implementation
 

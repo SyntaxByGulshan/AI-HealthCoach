@@ -47,6 +47,15 @@ class PredictionResponse(BaseModel):
     uncertainty: float
     unit: str = "kcal/day"
 
+# Helper function for BMI calculation
+def calculate_bmi(weight: float, height: float) -> float:
+    """
+    Calculate Body Mass Index
+    BMI = weight(kg) / (height(m))^2
+    """
+    height_m = height / 100  # Convert cm to meters
+    return weight / (height_m ** 2)
+
 # Global model variable
 model_data = None
 
@@ -78,33 +87,35 @@ def predict_tdee(stats: UserStats):
         raise HTTPException(status_code=503, detail="Model not loaded")
     
     try:
-        # Prepare input dataframe
-        # Note: If goal_weight is None, we might need to handle it. 
-        # For the dummy model, I added it as a feature. 
-        # If the user's model expects it, we pass it. If it's optional, we might pass 0 or current weight.
-        # Let's default to current weight if None for robustness
-        gw = stats.goal_weight if stats.goal_weight is not None else stats.weight
-
+        # Calculate BMI
+        bmi = calculate_bmi(stats.weight, stats.height)
+        
+        # Calculate weight_diff (goal weight - current weight)
+        # This matches the training feature engineering logic
+        # If goal_weight is not provided, default to current weight (diff = 0)
+        goal_weight = stats.goal_weight if stats.goal_weight is not None else stats.weight
+        weight_diff = goal_weight - stats.weight
+        
+        # Prepare input dataframe with all required features
+        # Model expects: ['age', 'gender', 'weight', 'height', 'weight_diff', 'activity_level', 'goal', 'BMI']
         input_df = pd.DataFrame([{
             'age': stats.age,
             'gender': stats.gender.lower(),
             'weight': stats.weight,
             'height': stats.height,
+            'weight_diff': weight_diff,
             'activity_level': stats.activity_level.lower(),
             'goal': stats.goal.lower(),
-            'goal_weight': gw
+            'BMI': bmi
         }])
         
-        # Check if model is a pipeline or just the model object
-        if isinstance(model_data, dict) and 'pipeline' in model_data:
-            pipeline = model_data['pipeline']
-            uncertainty = model_data.get('uncertainty', 0.0)
-        else:
-            # Assume it's the raw model object (e.g. user's joblib)
-            pipeline = model_data
-            uncertainty = 0.0 # Unknown if not in our dict format
-
-        prediction = pipeline.predict(input_df)[0]
+        logger.info(f"Predicting with features: {input_df.to_dict('records')[0]}")
+        
+        # Make prediction using the loaded model
+        prediction = model_data.predict(input_df)[0]
+        
+        # Calculate uncertainty as 5% of prediction (conservative estimate)
+        uncertainty = prediction * 0.05
         
         return {
             "tdee": round(float(prediction), 2),
