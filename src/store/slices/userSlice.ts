@@ -8,7 +8,10 @@ export interface UserProfileData {
     gender: string;
     height: number; // in cm
     weight: number; // in kg
-    goal: "reduceWeight" | "gainWeight" | "maintainWeight";
+    activity_level: string;
+    goal: "lose" | "gain" | "maintain";
+    goal_weight?: number;
+    tdee?: number; // Store the calculated TDEE
 }
 
 interface UserSliceState {
@@ -23,8 +26,8 @@ const userCurrentData: UserProfileData | null = storedUser ? JSON.parse(storedUs
 
 
 const initialState: UserSliceState = {
-    
-    userData: userCurrentData||null,
+
+    userData: userCurrentData || null,
     isLoading: false,
     error: null,
 };
@@ -35,24 +38,24 @@ const userSlice = createSlice({
     reducers: {
         setUserData: (state, action: PayloadAction<UserProfileData>) => {
             state.userData = action.payload;
-            localStorage.setItem("user",JSON.stringify(action.payload))
+            localStorage.setItem("user", JSON.stringify(action.payload))
             state.error = null;
         },
         updateUserData: (state, action: PayloadAction<Partial<UserProfileData>>) => {
             if (state.userData) {
                 state.userData = { ...state.userData, ...action.payload };
-               // const user:UserProfileData|null = JSON.parse(localStorage.getItem("user")||'');
-                 localStorage.setItem("user",JSON.stringify(state.userData))
-                  
-               
-                
+                // const user:UserProfileData|null = JSON.parse(localStorage.getItem("user")||'');
+                localStorage.setItem("user", JSON.stringify(state.userData))
+
+
+
             }
         },
-        
+
         clearUserData: (state) => {
             state.userData = null;
             state.error = null;
-              localStorage.removeItem("user");
+            localStorage.removeItem("user");
         },
         setLoading: (state, action: PayloadAction<boolean>) => {
             state.isLoading = action.payload;

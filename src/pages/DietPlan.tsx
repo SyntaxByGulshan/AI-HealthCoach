@@ -171,6 +171,21 @@ const DietPlan: React.FC = () => {
                 </div>
             )}
 
+            {!structuredPlan && !loading && !error && (
+                <div className="glass-card p-8 text-center border-2 border-teal-500/30">
+                    <Sparkles className="mx-auto mb-4 text-teal-400" size={48} />
+                    <h2 className="text-2xl font-bold text-white mb-2">No Diet Plan Generated</h2>
+                    <p className="text-gray-400 mb-6">Create a personalized meal plan based on your goals.</p>
+                    <button
+                        onClick={() => user && dispatch(fetchStructuredDietPlan({ userProfile: user, goal: user.goal }) as any)}
+                        className="px-8 py-3 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-teal-500/20 flex items-center gap-2 mx-auto"
+                    >
+                        <Sparkles size={20} />
+                        Generate AI Plan
+                    </button>
+                </div>
+            )}
+
             {structuredPlan && !loading && (
                 <div className="glass-card p-6 border border-teal-500/30">
                     <div className="flex items-center justify-between mb-4">

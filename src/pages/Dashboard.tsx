@@ -1,8 +1,10 @@
 import React from 'react';
 import StatCard from '../components/StatCard';
-import { Activity, Award, Droplets, Moon, Utensils, Dumbbell, CheckCircle2, XCircle, User, Flame } from 'lucide-react';
+import { Activity, Award, Droplets, Moon, Utensils, Dumbbell, CheckCircle2, XCircle, User, Flame, Zap } from 'lucide-react';
 import { useGoalsCompleted, useTodayHabits, useUserBMI, useUserBMR, WATER_GOAL, SLEEP_GOAL, WORKOUT_GOAL } from '../store/selectors';
 import { useAppSelector } from '../store/hooks';
+import { useTDEEPrediction } from '../components/TDEEPredictionExample';
+import { useEffect } from 'react';
 
 
 const Dashboard: React.FC = () => {
@@ -14,6 +16,13 @@ const Dashboard: React.FC = () => {
     const todayDiet = useAppSelector((state) => state.diet.history[todayDate]);
     const todayWorkout = useAppSelector((state) => state.workout.history[todayDate]);
     const user = useAppSelector((state) => state.user);
+    const { tdee, loading: tdeeLoading, error: tdeeError, getPrediction } = useTDEEPrediction();
+
+    useEffect(() => {
+        if (user.userData) {
+            getPrediction();
+        }
+    }, [user.userData]);
     // Calculate actual values
     const waterIntake = todayHabits?.waterIntake || 0;
     const sleepHours = todayHabits?.sleepHours || 0;
@@ -113,6 +122,44 @@ const Dashboard: React.FC = () => {
                                     Your actual daily calorie needs are higher when accounting for daily activities.
                                 </p>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* AI TDEE Prediction Card */}
+            {(tdee || tdeeLoading) && (
+                <div className="mb-8 animate-fade-in">
+                    <div className="glass-card p-6 md:p-8 border-2 border-purple-500/30">
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className="p-3 bg-purple-500/20 rounded-xl">
+                                <Zap size={32} className="text-purple-400" />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold text-white">AI Predicted TDEE</h2>
+                                <p className="text-gray-400">Total Daily Energy Expenditure</p>
+                            </div>
+                        </div>
+                        <div className="text-center py-4">
+                            {tdeeLoading ? (
+                                <div className="text-2xl text-gray-400 animate-pulse">Calculating...</div>
+                            ) : tdeeError ? (
+                                <div className="text-red-400">Unable to load prediction</div>
+                            ) : (
+                                <>
+                                    <div className="text-6xl font-bold text-purple-400 mb-2">
+                                        {Math.round(tdee!)}
+                                    </div>
+                                    <div className="text-gray-400 text-lg mb-4">
+                                        Calories/Day
+                                    </div>
+                                    <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4 mt-4">
+                                        <p className="text-gray-300 text-sm">
+                                            🤖 This is your personalized daily calorie need calculated by our AI model based on your profile and activity level.
+                                        </p>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -284,4 +331,3 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
-

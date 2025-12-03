@@ -60,7 +60,10 @@ The project follows the **Agile Development Model**, suitable for AI integration
 
 ### 3.3.1 High-Level Architecture
 
-The system adopts a **Client-Side Single Page Application (SPA)** architecture with **serverless AI integration**. All logic and state are managed in the browser, while AI computations are offloaded to the Gemini API.
+The system adopts a **Hybrid Full-Stack Architecture** with separated concerns:
+- **Frontend SPA**: Client-side React application for UI
+- **Backend ML Service**: FastAPI server for TDEE/calorie predictions
+- **Cloud AI Service**: Google Gemini for plan generation and coaching
 
 **Architecture Layers:**
 
@@ -73,10 +76,16 @@ The system adopts a **Client-Side Single Page Application (SPA)** architecture w
     *   Handles actions like updating user data or generating health scores.
 
 3.  **Service Layer (Integration):**
-    *   Communicates with the Gemini API to generate personalized plans.
+    *   **Gemini Service**: Communicates with Gemini API for personalized plans.
+    *   **Backend API Client**: Sends requests to FastAPI for ML predictions.
     *   Builds AI prompts using current user data.
 
-4.  **Persistence Layer (Model):**
+4.  **Backend ML Layer (Computation):**
+    *   FastAPI server hosts Random Forest ML model.
+    *   Performs feature engineering (BMI, weight_diff calculation).
+    *   Returns TDEE predictions with uncertainty estimates.
+
+5.  **Persistence Layer (Model):**
     *   Stores user data in LocalStorage for browser-based durability.
     *   Hydrates Redux store on page load to maintain state.
 
@@ -88,7 +97,13 @@ graph TD
         UI[React UI Components]
         Store[Redux Store]
         LS[(LocalStorage)]
-        Service[Gemini Service]
+        GeminiService[Gemini Service]
+        APIClient[Backend API Client]
+    end
+    
+    subgraph Backend
+        FastAPI[FastAPI Server]
+        MLModel[Random Forest Model]
     end
     
     subgraph Cloud
@@ -100,11 +115,19 @@ graph TD
     Store -- Write --> LS
     LS -- Hydrate State --> Store
 
-    UI -- AI Request --> Service
-    Service -- Fetch Context --> Store
-    Service -- Send Prompt --> Gemini
-    Gemini -- Return Response --> Service
-    Service -- Return Data --> UI
+    UI -- AI Plan Request --> GeminiService
+    GeminiService -- Fetch Context --> Store
+    GeminiService -- Send Prompt --> Gemini
+    Gemini -- Return Plan --> GeminiService
+    GeminiService -- Return Data --> UI
+    
+    UI -- TDEE Prediction Request --> APIClient
+    APIClient -- Fetch User Stats --> Store
+    APIClient -- POST /predict --> FastAPI
+    FastAPI -- Load Features --> MLModel
+    MLModel -- Return TDEE --> FastAPI
+    FastAPI -- Return Prediction --> APIClient
+    APIClient -- Update State --> Store
 ```
 
 ## 3.4 System Modules Description
@@ -131,7 +154,24 @@ graph TD
     3.  Parse AI response and display plan.
     4.  **Fallback:** Default local plan used if API is unavailable.
 
-### 3.4.4 Footsteps Tracker Module
+### 3.4.4 ML Prediction Service Module
+
+*   **Purpose:** Provides accurate TDEE/calorie predictions using trained ML model.
+*   **Implementation:** `backend/main.py` (FastAPI)
+*   **Process:**
+    1.  Receive user stats via POST /predict endpoint.
+    2.  Perform feature engineering (calculate BMI, weight_diff).
+    3.  Load trained Random Forest model (calorie_model.joblib).
+    4.  Generate prediction with uncertainty margin.
+    5.  Return TDEE value to frontend.
+
+**Model Architecture:**
+*   **Algorithm**: Random Forest Regressor
+*   **Features**: age, gender, weight, height, weight_diff, activity_level, goal, BMI
+*   **Output**: TDEE (Total Daily Energy Expenditure) in kcal/day
+*   **Size**: ~718MB serialized model file
+
+### 3.4.5 Footsteps Tracker Module
 
 *   **Purpose:** Tracks physical activity and integrates it with health score.
 *   **Implementation:** `footStepsTracker` component.

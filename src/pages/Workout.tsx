@@ -239,6 +239,21 @@ const Workout: React.FC = () => {
                 </div>
             )}
 
+            {!structuredPlan && !loading && !error && (
+                <div className="glass-card p-8 text-center border-2 border-orange-500/30">
+                    <Sparkles className="mx-auto mb-4 text-orange-400" size={48} />
+                    <h2 className="text-2xl font-bold text-white mb-2">No Workout Plan Generated</h2>
+                    <p className="text-gray-400 mb-6">Create a personalized workout routine based on your goals.</p>
+                    <button
+                        onClick={() => user && dispatch(fetchStructuredWorkoutPlan({ userProfile: user, goal: user.goal }) as any)}
+                        className="px-8 py-3 bg-orange-600 hover:bg-orange-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-orange-500/20 flex items-center gap-2 mx-auto"
+                    >
+                        <Sparkles size={20} />
+                        Generate AI Plan
+                    </button>
+                </div>
+            )}
+
             {/* Workout Type Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                 {WORKOUT_TYPES.map(({ key, label, icon, color, gradient }) => (
