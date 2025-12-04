@@ -136,8 +136,8 @@ const Dashboard: React.FC = () => {
                                 <Zap size={32} className="text-purple-400" />
                             </div>
                             <div>
-                                <h2 className="text-2xl font-bold text-white">AI Predicted TDEE</h2>
-                                <p className="text-gray-400">Total Daily Energy Expenditure</p>
+                                <h2 className="text-2xl font-bold text-white">AI Predicted </h2>
+                                <p className="text-gray-400">Total Calories Daily Intake</p>
                             </div>
                         </div>
                         <div className="text-center py-4">

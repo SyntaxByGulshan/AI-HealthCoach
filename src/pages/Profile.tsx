@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
-import { User, Save, Edit2, Check, Activity, Target } from 'lucide-react';
+import { User, Save, Edit2, Check, Activity, Target, Trash2 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { setUserData, updateUserData } from '../store/slices/userSlice';
+import { setUserData, updateUserData, clearUserData } from '../store/slices/userSlice';
+import { clearAllHabits } from '../store/slices/dailyHabitsSlice';
+import { clearDietHistory, clearDietPlan } from '../store/slices/dietSlice';
+import { clearWorkoutHistory, clearWorkoutPlan } from '../store/slices/workoutSlice';
+import { useNavigate } from 'react-router-dom';
 import type { UserProfileData } from '../store/slices/userSlice';
 
 const Profile: React.FC = () => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const { userData } = useAppSelector((state) => state.user);
     const [isEditing, setIsEditing] = useState(false);
     const [isCalculating, setIsCalculating] = useState(false);
@@ -90,6 +95,21 @@ const Profile: React.FC = () => {
             setFormData(userData);
         }
         setIsEditing(true);
+    };
+
+    const handleDeleteUser = () => {
+        if (window.confirm('Are you sure you want to delete your account? This action cannot be undone and all your data will be lost.')) {
+            // Clear all data from Redux stores and localStorage
+            dispatch(clearUserData());
+            dispatch(clearAllHabits());
+            dispatch(clearDietHistory());
+            dispatch(clearDietPlan());
+            dispatch(clearWorkoutHistory());
+            dispatch(clearWorkoutPlan());
+
+            // Navigate to home/setup
+            navigate('/');
+        }
     };
 
     const getGoalLabel = (goal: string) => {
@@ -460,6 +480,17 @@ const Profile: React.FC = () => {
                         </div>
                     </div>
                 )}
+
+                {/* Delete Account Button */}
+                <div className="mt-12 pt-8 border-t border-gray-700 flex justify-center">
+                    <button
+                        onClick={handleDeleteUser}
+                        className="flex items-center gap-2 px-6 py-3 bg-red-500/10 text-red-400 border border-red-500/50 rounded-lg font-semibold hover:bg-red-500 hover:text-white transition-all"
+                    >
+                        <Trash2 size={18} />
+                        Delete Account
+                    </button>
+                </div>
             </div>
         </div>
     );
