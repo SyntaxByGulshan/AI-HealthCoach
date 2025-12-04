@@ -85,6 +85,12 @@ const dietSlice = createSlice({
             state.history = {};
             localStorage.removeItem("dietHistory");
         },
+        clearDietPlan: (state) => {
+            state.structuredPlan = null;
+            state.planDate = null;
+            localStorage.removeItem("structuredDietPlan");
+            localStorage.removeItem("dietPlanDate");
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -107,5 +113,5 @@ const dietSlice = createSlice({
     },
 });
 
-export const { setCurrentDate, addMeal, removeMeal, clearDietHistory } = dietSlice.actions;
+export const { setCurrentDate, addMeal, removeMeal, clearDietHistory, clearDietPlan } = dietSlice.actions;
 export default dietSlice.reducer;

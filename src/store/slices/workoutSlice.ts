@@ -63,6 +63,12 @@ const workoutSlice = createSlice({
             state.history = {};
             localStorage.removeItem("workoutHistory");
         },
+        clearWorkoutPlan: (state) => {
+            state.structuredPlan = null;
+            state.planDate = null;
+            localStorage.removeItem("structuredWorkoutPlan");
+            localStorage.removeItem("workoutPlanDate");
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -85,5 +91,5 @@ const workoutSlice = createSlice({
     },
 });
 
-export const { setCurrentDate, updateWorkout, clearWorkoutHistory } = workoutSlice.actions;
+export const { setCurrentDate, updateWorkout, clearWorkoutHistory, clearWorkoutPlan } = workoutSlice.actions;
 export default workoutSlice.reducer;
