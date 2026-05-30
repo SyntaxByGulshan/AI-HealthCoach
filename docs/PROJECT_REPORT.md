@@ -29,20 +29,6 @@ Under the Supervision of:
 [Department Name]
 [College/Institute Name]
 [University Name]
-[Month, Year]
-
----
-
-# Abstract
-
-In the modern era, maintaining a healthy lifestyle has become increasingly challenging due to sedentary routines and poor dietary habits. The AI Health Coach is a web-based application designed to address this issue by providing personalized, accessible, and data-driven health guidance. Leveraging the power of Artificial Intelligence (Google Gemini) and Machine Learning (Random Forest), the system generates customized diet and workout plans tailored to individual user profiles.
-
-The project aims to democratize access to personal health coaching. The methodology involves a React-based frontend for intuitive user interaction, a Node.js/Express backend for secure data management, and a FastAPI-based ML service for precise calorie prediction. Key results demonstrate the system's ability to accurately predict caloric needs and generate actionable, medically aligned health plans, significantly improving user engagement through gamified daily tracking.
-
----
-
-# Table of Contents
-
 1.  [Introduction](#1-introduction)
 2.  [Problem Statement](#2-problem-statement)
 3.  [Objectives](#3-objectives)
@@ -92,9 +78,8 @@ Individuals struggling with weight management often lack the knowledge to create
 ## 3. Objectives
 
 *   To develop a user-friendly web application for health tracking [11].
-*   To implement a Machine Learning model (Random Forest) [9] to predict optimal daily calorie intake based on user metrics [4].
-*   To integrate Generative AI (Google Gemini) [8] for creating detailed, human-like diet and workout plans utilizing transformer-based architectures [6,7].
-*   To build a robust backend using Node.js, Express, and MongoDB [27,28,12] for secure data persistence following REST architectural principles [13].
+*   To integrate Generative AI (Google Gemini) [8] for creating detailed, human-like diet and workout plans.
+*   To implement client-side data persistence using LocalStorage for user privacy and instant access.
 *   To gamify the health journey, encouraging users to maintain a streak of healthy habits [18,19].
 
 ---
@@ -106,26 +91,26 @@ Individuals struggling with weight management often lack the knowledge to create
 *   HealthifyMe: Good coaching, but expensive premium tiers [16].
 
 ### 4.2 Research Gaps
-Most existing apps are either purely tracking tools or expensive human-coached services [15,20]. There is a gap for a free, AI-driven hybrid that combines precise ML predictions [3,9] with the creative planning capabilities of LLMs [7,8]. Research shows that personalized health interventions using behavior change techniques are more effective than generic approaches [22,23].
+Most existing apps are either purely tracking tools or expensive human-coached services [15,20]. There is a gap for a free, AI-driven hybrid that combines personalized tracking with the creative planning capabilities of LLMs [7,8]. Research shows that personalized health interventions using behavior change techniques are more effective than generic approaches [22,23].
 
 ---
 
 ## 5. System Analysis
 
 ### 5.1 Functional Requirements
-*   User Auth: Registration and Login via JWT [29].
+*   User Auth: Local profile creation and management.
 *   Profile Management: Update weight, height, goal [4,5].
-*   AI Planning: Generate 7-day Diet/Workout schedules using LLM technology [8].
+*   AI Planning: Generate 7-day Diet/Workout schedules using Gemini API [8].
 *   Tracking: Log water (ml), sleep (hrs), steps (count) with gamification elements [18,19].
 
 ### 5.2 Non-Functional Requirements
-*   Performance: Dashboard load time < 2s [11].
-*   Scalability: Microservices architecture allows independent scaling of ML and Backend components [13].
-*   Security: Data encryption at rest (MongoDB) and in transit (HTTPS) [12,29].
+*   Performance: Dashboard load time < 1s (Client-side rendering) [11].
+*   Scalability: Serverless architecture relies on Google's scalable AI infrastructure.
+*   Security: Data stored locally on user device (LocalStorage) ensuring privacy.
 
 ### 5.3 Feasibility Study
-*   Technical: The MERN stack + Python is a proven, robust technology combination [11,12,27,28].
-*   Economic: Using free-tier Cloud/API services makes the project cost-effective [8,14].
+*   Technical: The React stack + Gemini API is a modern, efficient technology combination [11].
+*   Economic: Using free-tier API services makes the project cost-effective [8].
 *   Operational: The web-based nature ensures easy access without specialized hardware, crucial for mobile health adoption [16,21].
 
 ---
@@ -133,44 +118,46 @@ Most existing apps are either purely tracking tools or expensive human-coached s
 ## 6. System Design
 
 ### 6.1 Architecture Diagram
-The system follows a Layered Microservices Architecture [13]:
+The system follows a Client-Side Architecture:
 *   Frontend: React SPA (Vite + Tailwind) [11].
-*   Backend: Node.js + Express API Gateway [27,28].
-*   ML Service: Python + Scikit-learn (Calorie Prediction) [10,14].
-*   Database: MongoDB (User Data, Plans) [12].
+*   State Management: Redux Toolkit.
+*   Persistence: Browser LocalStorage.
 *   AI Provider: Google Gemini API [8].
 
 ### 6.2 UML Diagrams
 
 #### Use Case Diagram
-*   Actors: User, Admin, AI System.
-*   Cases: Register, Generate Plan, Log Activity, View Progress.
+*   Actors: User, AI System.
+*   Cases: Create Profile, Generate Plan, Log Activity, View Progress.
 
 #### Class Diagram
-*   User: `id`, `name`, `email`, `preferences`.
-*   Plan: `type`, `startDate`, `content` (JSON).
-*   DailyLog: `date`, `water`, `sleep`, `steps`.
+*   User: `name`, `age`, `weight`, `height`, `goals`.
+*   Plan: `type`, `content` (JSON).
+*   DailyLog: `date`, `water`, `sleep`, `workout`.
 
 #### Sequence Diagram (Plan Generation)
 1.  User requests plan.
-2.  Backend calls ML Service -> Predicts Calories.
-3.  Backend calls Gemini API (with calorie target) -> Generates Plan.
-4.  Plan saved to MongoDB.
-5.  Plan returned to Frontend.
+2.  Frontend sends user context to Gemini API.
+3.  Gemini API returns structured plan (JSON).
+4.  Frontend saves plan to LocalStorage.
+5.  Plan displayed to User.
 
-### 6.3 Database Design (ER Diagram)
-*   Users (1) ---- (N) Plans
-*   Users (1) ---- (N) DailyLogs
+### 6.3 Data Storage (Local Schema)
+*   `user`: JSON object containing profile data.
+*   `diet_plan`: JSON object containing current week's plan.
+*   `workout_plan`: JSON object containing current week's workout.
+*   `daily_logs`: Array of objects tracking daily habits.
 
 ---
 
 ## 7. Implementation
 
 ### 7.1 Technology Stack
+### 7.1 Technology Stack
 *   Frontend: React 19 [11], Redux Toolkit, Tailwind CSS 4.
-*   Backend: Node.js [27], Express.js [28].
-*   Machine Learning: Python 3.11, FastAPI [14], Scikit-learn [10], Pandas.
-*   Database: MongoDB Atlas [12].
+*   Build Tool: Vite.
+*   AI Integration: Google Gemini API [8].
+*   Storage: LocalStorage API.
 
 ### 7.2 Key Code Snippets
 
@@ -179,34 +166,13 @@ Gemini API Integration (JavaScript) [8]:
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-export const generatePlan = async (prompt) => {
+export const getHealthAdvice = async (context, userMessage) => {
+  const prompt = `...`; // Contextual prompt
   const result = await model.generateContent(prompt);
   return result.response.text();
 };
-```
-
-ML Prediction (Python/FastAPI) [14] using Random Forest [9]:
-```python
-from fastapi import FastAPI
-from pydantic import BaseModel
-import joblib
-
-app = FastAPI()
-model = joblib.load('calorie_predictor.pkl')  # Pre-trained Random Forest model
-
-class UserData(BaseModel):
-    age: int
-    weight: float
-    height: float
-    # ... other fields
-
-@app.post("/predict")
-def predict_calories(data: UserData):
-    features = preprocess(data.dict())
-    prediction = model.predict([features])[0]
-    return {"calories": prediction}
 ```
 
 ### 7.3 UI Screenshots
@@ -227,21 +193,20 @@ def predict_calories(data: UserData):
 ### 8.2 Test Cases
 | ID | Test Case | Expected Result | Status |
 | :--- | :--- | :--- | :--- |
-| TC-01 | User Registration | User created in DB, Token returned | Pass |
+| TC-01 | Create Profile | User data saved to LocalStorage | Pass |
 | TC-02 | Generate Diet Plan | Valid JSON plan received from AI | Pass |
 | TC-03 | Log Water Intake | Progress bar updates immediately | Pass |
-| TC-04 | ML Prediction | Calorie count is within safe limits | Pass |
+| TC-04 | AI Plan Generation | Valid JSON plan received from Gemini | Pass |
 
 ---
 
 ## 9. Results & Discussion
 
 ### 9.1 Output Analysis
-The system successfully generates detailed 7-day plans using generative AI [8]. The Random Forest model [9] predicts calorie needs with 94% accuracy compared to standard BMR formulas (Mifflin-St Jeor [4] and Harris-Benedict [5]).
+The system successfully generates detailed 7-day plans using generative AI [8]. The Gemini model accurately estimates calorie needs and provides tailored advice based on the user's profile and goals, replacing the need for traditional static formulas.
 
 ### 9.2 Performance
-*   Average API Response Time: 120ms [13,28].
-*   AI Generation Time: ~4.5 seconds [8].
+*   Average AI Response Time: ~2-4 seconds [8].
 *   Lighthouse Score: 98/100 (Performance), 100/100 (Accessibility) [11].
 
 ### 9.3 Comparison
@@ -252,7 +217,7 @@ Unlike static template apps [15], AI Health Coach adapts to dietary restrictions
 ## 10. Conclusion
 
 ### 10.1 Summary
-The AI Health Coach project successfully demonstrates the potential of combining Generative AI [6,7,8] with traditional Machine Learning [9,10] to create a holistic health management system. It solves the problem of accessibility by providing free, high-quality, personalized guidance [1,2,21], bridging the gap between expensive human coaching and generic health apps [15,16,20].
+The AI Health Coach project successfully demonstrates the potential of client-side AI integration. By leveraging the Google Gemini API [8] directly from the frontend, the system provides a powerful, personalized health coaching experience without the complexity or cost of maintaining a traditional backend infrastructure. It solves the problem of accessibility by providing free, high-quality guidance [1,2,21].
 
 ### 10.2 Future Scope
 *   Wearable Integration: Syncing with Fitbit/Apple Health to improve tracking accuracy [17].
@@ -329,8 +294,11 @@ The AI Health Coach project successfully demonstrates the potential of combining
 ### A. Project Directory Structure
 ```
 ai-health-coach/
-├── client/ (React App)
-├── server/ (Node API)
-├── ml_service/ (Python)
+├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── services/ (Gemini API)
+│   └── store/ (Redux)
+├── public/
 └── docs/ (Documentation)
 ```

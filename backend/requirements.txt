@@ -1,8 +1,6 @@
 fastapi
 uvicorn
-pydantic
-scikit-learn
-joblib
-numpy
 pandas
-// python -m uvicorn main:app --reload
+joblib
+scikit-learn
+pydantic
