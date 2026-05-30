@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { User, Save, Edit2, Check, Activity, Target, Trash2 } from 'lucide-react';
+import { User, Save, Edit2, Activity, Target, Trash2, Plus } from 'lucide-react';
+
+
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { setUserData, updateUserData, clearUserData } from '../store/slices/userSlice';
 import { clearAllHabits } from '../store/slices/dailyHabitsSlice';
@@ -25,7 +27,9 @@ const Profile: React.FC = () => {
         goal: userData?.goal || 'lose',
         activity_level: userData?.activity_level || 'sedentary',
         goal_weight: userData?.goal_weight || 0,
+        medical_history: userData?.medical_history || [],
     });
+
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -341,8 +345,197 @@ const Profile: React.FC = () => {
                             />
                         </div>
 
+                        {/* Medical History */}
+                        <div className="pt-6">
+                            <div className="flex items-center justify-between gap-4 mb-4">
+                                <h3 className="text-lg font-semibold text-teal-400">Medical History</h3>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const newEntry = {
+                                            id: crypto.randomUUID(),
+                                            condition: '',
+                                            date: new Date().toISOString().split('T')[0],
+                                            medications: '',
+                                            allergies: '',
+                                            surgeries: '',
+                                            notes: '',
+                                        };
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            medical_history: [...(prev.medical_history || []), newEntry],
+                                        }));
+                                    }}
+                                    className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg text-white hover:border-teal-400 transition-all"
+                                >
+                                    <Plus size={18} />
+                                    Add entry
+                                </button>
+                            </div>
+
+                            {(formData.medical_history || []).length === 0 ? (
+                                <p className="text-sm text-gray-400">No medical history added yet.</p>
+                            ) : (
+                                <div className="space-y-4">
+                                    {(formData.medical_history || []).map((entry, idx) => (
+                                        <div key={entry.id} className="bg-gray-800/30 rounded-lg p-4">
+                                            <div className="flex items-start justify-between gap-3 mb-3">
+                                                <div>
+                                                    <p className="text-sm text-gray-400">Entry {idx + 1}</p>
+                                                    <p className="text-white font-medium">{entry.condition?.trim() ? entry.condition : 'New entry'}</p>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            medical_history: (prev.medical_history || []).filter(e => e.id !== entry.id),
+                                                        }));
+                                                    }}
+                                                    className="p-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/50 hover:bg-red-500 hover:text-white transition-all"
+                                                    aria-label="Remove medical history entry"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                                        Condition / Diagnosis
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        name="condition"
+                                                        value={entry.condition}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                medical_history: (prev.medical_history || []).map(x =>
+                                                                    x.id === entry.id ? { ...x, condition: value } : x
+                                                                ),
+                                                            }));
+                                                        }}
+                                                        placeholder="e.g., Hypertension"
+                                                        className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20 transition-all"
+                                                    />
+                                                </div>
+
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                                        Date <span className="text-gray-500">(optional)</span>
+                                                    </label>
+                                                    <input
+                                                        type="date"
+                                                        name="date"
+                                                        value={entry.date || ''}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                medical_history: (prev.medical_history || []).map(x =>
+                                                                    x.id === entry.id ? { ...x, date: value || undefined } : x
+                                                                ),
+                                                            }));
+                                                        }}
+                                                        className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20 transition-all"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-300 mb-2">Medications</label>
+                                                    <textarea
+                                                        name="medications"
+                                                        value={entry.medications || ''}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                medical_history: (prev.medical_history || []).map(x =>
+                                                                    x.id === entry.id ? { ...x, medications: value } : x
+                                                                ),
+                                                            }));
+                                                        }}
+                                                        className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20 transition-all"
+                                                        placeholder="e.g., Metformin 500mg"
+                                                        rows={2}
+                                                    />
+                                                </div>
+
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-300 mb-2">Allergies</label>
+                                                    <textarea
+                                                        name="allergies"
+                                                        value={entry.allergies || ''}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                medical_history: (prev.medical_history || []).map(x =>
+                                                                    x.id === entry.id ? { ...x, allergies: value } : x
+                                                                ),
+                                                            }));
+                                                        }}
+                                                        className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20 transition-all"
+                                                        placeholder="e.g., Penicillin"
+                                                        rows={2}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-300 mb-2">Surgeries</label>
+                                                    <textarea
+                                                        name="surgeries"
+                                                        value={entry.surgeries || ''}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                medical_history: (prev.medical_history || []).map(x =>
+                                                                    x.id === entry.id ? { ...x, surgeries: value } : x
+                                                                ),
+                                                            }));
+                                                        }}
+                                                        className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20 transition-all"
+                                                        placeholder="e.g., Appendectomy (2018)"
+                                                        rows={2}
+                                                    />
+                                                </div>
+
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-300 mb-2">Notes</label>
+                                                    <textarea
+                                                        name="notes"
+                                                        value={entry.notes || ''}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                medical_history: (prev.medical_history || []).map(x =>
+                                                                    x.id === entry.id ? { ...x, notes: value } : x
+                                                                ),
+                                                            }));
+                                                        }}
+                                                        className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20 transition-all"
+                                                        placeholder="Additional context"
+                                                        rows={2}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
                         {/* Buttons */}
                         <div className="flex flex-col sm:flex-row gap-4 pt-4">
+
                             <button
                                 type="submit"
                                 disabled={isCalculating}
@@ -442,8 +635,66 @@ const Profile: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Medical History */}
+                <div className="mt-6">
+                    <h2 className="text-xl font-semibold text-teal-400 mb-4">Medical History</h2>
+                    {(!userData.medical_history || userData.medical_history.length === 0) ? (
+                        <div className="bg-gray-800/30 rounded-lg p-6">
+                            <p className="text-sm text-gray-400">No medical history added yet.</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            {userData.medical_history!.map((entry) => (
+                                <div key={entry.id} className="bg-gray-800/30 rounded-lg p-5">
+                                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                                        <div>
+                                            <p className="text-white font-semibold">{entry.condition || 'Untitled condition'}</p>
+                                            {entry.date ? (
+                                                <p className="text-sm text-gray-400">Date: {entry.date}</p>
+                                            ) : (
+                                                <p className="text-sm text-gray-400">Date: —</p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div>
+                                            <p className="text-sm text-gray-400">Medications</p>
+                                            <p className="text-sm text-white whitespace-pre-wrap">
+                                                {entry.medications?.trim() ? entry.medications : '—'}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-400">Allergies</p>
+                                            <p className="text-sm text-white whitespace-pre-wrap">
+                                                {entry.allergies?.trim() ? entry.allergies : '—'}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div>
+                                            <p className="text-sm text-gray-400">Surgeries</p>
+                                            <p className="text-sm text-white whitespace-pre-wrap">
+                                                {entry.surgeries?.trim() ? entry.surgeries : '—'}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-400">Notes</p>
+                                            <p className="text-sm text-white whitespace-pre-wrap">
+                                                {entry.notes?.trim() ? entry.notes : '—'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
                 {/* Health Goal */}
                 <div className="mt-6">
+
                     <h2 className="text-xl font-semibold text-teal-400 mb-4">Health Goal</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="bg-gray-800/30 rounded-lg p-6 flex items-center gap-4">

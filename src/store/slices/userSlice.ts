@@ -2,6 +2,18 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
 
+export interface MedicalHistoryEntry {
+    id: string;
+    /** ISO date string (YYYY-MM-DD) */
+    date?: string;
+    /** Diagnosis / condition */
+    condition: string;
+    medications?: string;
+    allergies?: string;
+    surgeries?: string;
+    notes?: string;
+}
+
 export interface UserProfileData {
     name: string;
     age: number;
@@ -12,7 +24,10 @@ export interface UserProfileData {
     goal: "lose" | "gain" | "maintain";
     goal_weight?: number;
     tdee?: number; // Store the calculated TDEE
+    /** Free-form medical history entries (persisted to localStorage with the rest of the user profile) */
+    medical_history?: MedicalHistoryEntry[];
 }
+
 
 interface UserSliceState {
     userData: UserProfileData | null;
@@ -26,11 +41,11 @@ const userCurrentData: UserProfileData | null = storedUser ? JSON.parse(storedUs
 
 
 const initialState: UserSliceState = {
-
     userData: userCurrentData || null,
     isLoading: false,
     error: null,
 };
+
 
 const userSlice = createSlice({
     name: 'user',

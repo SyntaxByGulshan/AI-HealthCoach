@@ -11,10 +11,13 @@ import AICoach from './pages/AICoach';
 import DietPlan from './pages/DietPlan';
 import Workout from './pages/Workout';
 
+
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+
   return (
+
     <BrowserRouter>
       <div className="flex h-screen overflow-hidden">
         {/* Sidebar */}
@@ -37,7 +40,12 @@ function App() {
           </div>
 
           <Routes>
+            {/* Landing page (default) */}
+            
+
+            {/* Real app */}
             <Route path="/" element={<Dashboard />} />
+
             <Route path="/profile" element={<Profile />} />
             <Route path="/habits" element={<DailyHabits />} />
             <Route path="/progress" element={<Progress />} />
